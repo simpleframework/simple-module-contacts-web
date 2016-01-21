@@ -8,8 +8,12 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>simple-module-contacts-web</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  
+  <version>${simple.module.contacts.web}</version>
+
   <dependencies>
+    <dependency>
+      <groupId>net.simpleframework</groupId>
+      <artifactId>simple-module-contacts-service</artifactId>
+    </dependency>
   </dependencies>
 </project>
