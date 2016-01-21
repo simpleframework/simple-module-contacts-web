@@ -13,6 +13,11 @@
   <dependencies>
     <dependency>
       <groupId>net.simpleframework</groupId>
+      <artifactId>simple-mvc-template</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>net.simpleframework</groupId>
       <artifactId>simple-module-contacts-service</artifactId>
     </dependency>
   </dependencies>
