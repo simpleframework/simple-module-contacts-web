@@ -29,7 +29,7 @@ public class MyContactsTPage extends AbstractTBTemplatePage {
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
 		final TablePagerBean tablePager = (TablePagerBean) super.addTablePagerBean(pp,
 				"MyContactsTPage_tbl", MyContactsTbl.class).setContainerId("idMyContactsTPage_tbl");
-		tablePager.addColumn(TablePagerColumn.OPE(70));
+		tablePager.addColumn(new TablePagerColumn("name")).addColumn(TablePagerColumn.OPE(70));
 		return tablePager;
 	}
 
