@@ -58,6 +58,5 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	}
 
 	public static class MyContactsTbl extends AbstractDbTablePagerHandler {
-
 	}
 }
