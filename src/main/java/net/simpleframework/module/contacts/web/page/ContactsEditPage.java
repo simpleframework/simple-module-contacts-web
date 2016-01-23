@@ -1,7 +1,10 @@
 package net.simpleframework.module.contacts.web.page;
 
 import static net.simpleframework.common.I18n.$m;
+import net.simpleframework.ctx.permission.PermissionUser;
 import net.simpleframework.module.contacts.IContactsContextAware;
+import net.simpleframework.mvc.IForward;
+import net.simpleframework.mvc.JsonForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.CalendarInput;
 import net.simpleframework.mvc.common.element.DictMultiSelectInput;
@@ -12,6 +15,7 @@ import net.simpleframework.mvc.common.element.RowField;
 import net.simpleframework.mvc.common.element.TableRow;
 import net.simpleframework.mvc.common.element.TableRows;
 import net.simpleframework.mvc.common.element.TextButton;
+import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.base.validation.EValidatorMethod;
 import net.simpleframework.mvc.component.base.validation.Validator;
 import net.simpleframework.mvc.component.ext.deptselect.DeptSelectBean;
@@ -38,10 +42,17 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 		// 帐号选择
 		addComponentBean(pp, "ContactsEditPage_userselect", UserSelectBean.class).setShowGroupOpt(
-				false).setJsSelectCallback("ContactsEditPage.userSelected(selects)");
+				false).setJsSelectCallback("return ContactsEditPage.userSelected(selects)");
+		// 帐号选择Action
+		addAjaxRequest(pp, "ContactsEditPage_us_callback").setHandlerMethod("doUserSelect");
 
 		// 表单验证
 		addFormValidationBean(pp).addValidators(new Validator(EValidatorMethod.required, "#ce_text"));
+	}
+
+	public IForward doUserSelect(final ComponentParameter cp) {
+		final PermissionUser user = cp.getUser(cp.getParameter("userId"));
+		return new JsonForward().put("text", user.getText());
 	}
 
 	@Override
