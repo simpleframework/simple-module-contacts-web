@@ -32,7 +32,7 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 
 		// 编辑窗口
 		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "MyContactsTPage_editPage",
-				ContactsEditPage.class);
+				MyContactsEditPage.class);
 		addWindowBean(pp, "MyContactsTPage_edit", ajaxRequest).setTitle($m("MyContactsTPage.0"))
 				.setHeight(500).setWidth(620);
 	}
@@ -59,5 +59,8 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	}
 
 	public static class MyContactsTbl extends AbstractDbTablePagerHandler {
+	}
+
+	public static class MyContactsEditPage extends ContactsEditPage {
 	}
 }

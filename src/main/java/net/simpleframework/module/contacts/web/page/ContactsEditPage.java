@@ -61,8 +61,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 	@Override
 	public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
-		// _accountService.getBean(pp.getParameter("accountId"))
-
+		// _accountService.getBean(pp.getParameter("contactsId"))
 		return super.onSave(cp);
 	}
 
