@@ -1,9 +1,11 @@
 package net.simpleframework.module.contacts.web.page;
 
 import static net.simpleframework.common.I18n.$m;
+import net.simpleframework.common.Convert;
 import net.simpleframework.ctx.permission.PermissionUser;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.mvc.IForward;
+import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.JsonForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.CalendarInput;
@@ -52,7 +54,16 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 	public IForward doUserSelect(final ComponentParameter cp) {
 		final PermissionUser user = cp.getUser(cp.getParameter("userId"));
-		return new JsonForward().put("text", user.getText());
+		return new JsonForward().put("text", user.getText())
+				.put("birthday", Convert.toDateString(user.getBirthday(), "yyyy-MM-dd"))
+				.put("dept", user.getDept().toString());
+	}
+
+	@Override
+	public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
+		// _accountService.getBean(pp.getParameter("accountId"))
+
+		return super.onSave(cp);
 	}
 
 	@Override
