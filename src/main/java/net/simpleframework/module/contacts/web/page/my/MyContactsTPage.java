@@ -3,6 +3,7 @@ package net.simpleframework.module.contacts.web.page.my;
 import static net.simpleframework.common.I18n.$m;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.module.contacts.web.page.ContactsEditPage;
+import net.simpleframework.module.contacts.web.page.ContactsUtils;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
@@ -25,8 +26,8 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	protected void onForward(final PageParameter pp) throws Exception {
 		super.onForward(pp);
 
-		pp.addImportCSS(ContactsEditPage.class, "/contacts.css");
-		pp.addImportJavascript(ContactsEditPage.class, "/js/contacts.js");
+		pp.addImportCSS(ContactsUtils.class, "/contacts.css");
+		pp.addImportJavascript(ContactsUtils.class, "/js/contacts.js");
 
 		// 添加表格
 		addTablePagerBean(pp);

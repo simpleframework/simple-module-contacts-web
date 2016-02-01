@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.simpleframework.module.common.web.page.AbstractMgrTPage;
 import net.simpleframework.module.contacts.web.page.ContactsTagPage;
+import net.simpleframework.module.contacts.web.page.ContactsUtils;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
@@ -24,9 +25,11 @@ public class ContactsTPage extends AbstractMgrTPage {
 	protected void onForward(final PageParameter pp) throws Exception {
 		super.onForward(pp);
 
+		pp.addImportCSS(ContactsUtils.class, "/contacts.css");
+
 		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage",
 				ContactsTagPage.class);
-		addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTPage.0"))
+		addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTagPage.0"))
 				.setHeight(500).setWidth(400);
 	}
 
