@@ -27,7 +27,7 @@ public class ContactsTPage extends AbstractMgrTPage {
 		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage",
 				ContactsTagPage.class);
 		addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTPage.0"))
-				.setHeight(500).setWidth(620);
+				.setHeight(500).setWidth(400);
 	}
 
 	@Override

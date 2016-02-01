@@ -52,6 +52,11 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		addFormValidationBean(pp).addValidators(new Validator(EValidatorMethod.required, "#ce_text"));
 	}
 
+	@Override
+	protected String getPageCSS(final PageParameter pp) {
+		return "ContactsEditPage";
+	}
+
 	public IForward doUserSelect(final ComponentParameter cp) {
 		final PermissionUser user = cp.getUser(cp.getParameter("userId"));
 		return new JsonForward().put("text", user.getText())

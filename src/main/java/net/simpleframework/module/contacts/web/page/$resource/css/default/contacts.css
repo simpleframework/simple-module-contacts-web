@@ -13,6 +13,12 @@
   padding: 10px;
 }
 
-.FormTableRowTemplatePage .form_tbl .l {
+.ContactsEditPage .FormTableRowTemplatePage .form_tbl .l {
+  padding: 6px;
+}
+
+/*-------------------------ContactsTagPage--------------------------*/
+
+#idContactsTagPage_tbl {
   padding: 6px;
 }
