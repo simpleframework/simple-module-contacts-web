@@ -24,8 +24,9 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	@Override
 	protected void onForward(final PageParameter pp) throws Exception {
 		super.onForward(pp);
-		pp.addImportCSS(MyContactsTPage.class, "/my-contacts.css");
-		pp.addImportJavascript(MyContactsTPage.class, "/js/my-contacts.js");
+
+		pp.addImportCSS(ContactsEditPage.class, "/contacts.css");
+		pp.addImportJavascript(ContactsEditPage.class, "/js/contacts.js");
 
 		// 添加表格
 		addTablePagerBean(pp);
