@@ -5,11 +5,13 @@ import static net.simpleframework.common.I18n.$m;
 import java.util.Map;
 
 import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.ctx.permission.PermissionDept;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.mvc.AbstractMVCPage;
+import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ButtonElement;
@@ -55,6 +57,15 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 				AddTagPage.class);
 		addWindowBean(pp, "ContactsTagPage_add", ajaxRequest).setTitle($m("ContactsTagPage.0"))
 				.setHeight(300).setWidth(360);
+
+		// 删除
+		addDeleteAjaxRequest(pp, "ContactsTagPage_del");
+	}
+
+	public IForward doDelete(final ComponentParameter cp) {
+		final Object[] ids = StringUtils.split(cp.getParameter("id"));
+		_contactsTagService.delete(ids);
+		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
 	}
 
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
@@ -109,7 +120,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 
 		protected String toOpeHTML(final ComponentParameter cp, final ContactsTag tag) {
 			final StringBuilder sb = new StringBuilder();
-			sb.append(ButtonElement.deleteBtn());
+			sb.append(ButtonElement.deleteBtn().setOnclick(
+					"$Actions['ContactsTagPage_del']('id=" + tag.getId() + "');"));
 			return sb.toString();
 		}
 	}
