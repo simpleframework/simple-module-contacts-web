@@ -6,18 +6,23 @@ import java.util.Map;
 
 import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.coll.KVMap;
+import net.simpleframework.ctx.permission.PermissionDept;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.module.contacts.IContactsContextAware;
+import net.simpleframework.mvc.AbstractMVCPage;
 import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ButtonElement;
+import net.simpleframework.mvc.common.element.EElementEvent;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
 import net.simpleframework.mvc.common.element.LinkElement;
+import net.simpleframework.mvc.common.element.SpanElement;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
 import net.simpleframework.mvc.component.base.validation.EValidatorMethod;
 import net.simpleframework.mvc.component.base.validation.Validator;
+import net.simpleframework.mvc.component.ext.deptselect.DeptSelectBean;
 import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
@@ -26,6 +31,7 @@ import net.simpleframework.mvc.component.ui.propeditor.EInputCompType;
 import net.simpleframework.mvc.component.ui.propeditor.InputComp;
 import net.simpleframework.mvc.component.ui.propeditor.PropEditorBean;
 import net.simpleframework.mvc.component.ui.propeditor.PropField;
+import net.simpleframework.mvc.component.ui.propeditor.PropFields;
 import net.simpleframework.mvc.template.AbstractTBTemplatePage;
 import net.simpleframework.mvc.template.lets.FormPropEditorTemplatePage;
 
@@ -94,7 +100,9 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 			if (contacts == 0) {
 				sb.append(" (").append(contacts).append(")");
 			}
-			if (cp.isLmanager()) {
+			PermissionDept org;
+			if (cp.isLmanager() && (org = cp.getDept(tag.getOrgId())).exists()) {
+				sb.append("<br>").append(SpanElement.color777(org));
 			}
 			return sb.toString();
 		}
@@ -119,16 +127,23 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		@Override
 		public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
 			ContactsTag tag = _contactsTagService.getBean(cp.getParameter("tag_id"));
-			if (tag == null) {
+			final boolean insert = tag == null;
+			if (insert) {
 				tag = _contactsTagService.createBean();
 				tag.setOrgId(ContactsUtils.getDomainId(cp));
 			}
 			tag.setText(cp.getParameter("tag_name"));
 			tag.setDescription(cp.getParameter("tag_description"));
 			if (cp.isLmanager()) {
+				final PermissionDept org = cp.getDept(cp.getParameter("org_id"));
+				tag.setOrgId(org.getId());
 			}
-			_contactsTagService.insert(tag);
-			return super.onSave(cp);
+			if (insert) {
+				_contactsTagService.insert(tag);
+			} else {
+				_contactsTagService.update(tag);
+			}
+			return super.onSave(cp).append("$Actions['ContactsTagPage_tbl']();");
 		}
 
 		@Override
@@ -141,14 +156,30 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 			if (tag != null) {
 				tagId.setDefaultValue(tag.getId());
 				tag_name.setDefaultValue(tag.getText());
-
+				tag_description.setDefaultValue(tag.getDescription());
 			}
 
-			final PropField f1 = new PropField($m("AddTagPage.0")).addComponents(tagId, tag_name);
+			final PropFields fields = propEditor.getFormFields();
+			fields.add(new PropField($m("AddTagPage.0")).addComponents(tagId, tag_name));
 			if (pp.isLmanager()) {
+				pp.addComponentBean("ContactsTagPage_deptSelect", DeptSelectBean.class).setOrg(true)
+						.setBindingId("org_id").setBindingText("org_text");
+				final InputComp org_id = InputComp.hidden("org_id");
+				final InputComp org_text = InputComp.textButton("org_text").setAttributes("readonly")
+						.addEvent(EElementEvent.click, "$Actions['ContactsTagPage_deptSelect']();");
+				PermissionDept org = null;
+				if (tag != null) {
+					org = pp.getDept(tag.getOrgId());
+				} else {
+					org = AbstractMVCPage.getPermissionOrg(pp);
+				}
+				if (org != null) {
+					org_id.setDefaultValue(org.getId());
+					org_text.setDefaultValue(org.getText());
+				}
+				fields.add(new PropField($m("AddTagPage.1")).addComponents(org_id, org_text));
 			}
-			final PropField f2 = new PropField($m("Description")).addComponents(tag_description);
-			propEditor.getFormFields().append(f1, f2);
+			fields.add(new PropField($m("Description")).addComponents(tag_description));
 		}
 	}
 }
