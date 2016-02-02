@@ -8,6 +8,8 @@ import java.util.Map;
 import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.module.common.web.page.AbstractMgrTPage;
+import net.simpleframework.module.contacts.IContactsContextAware;
+import net.simpleframework.module.contacts.web.page.ContactsEditPage;
 import net.simpleframework.module.contacts.web.page.ContactsTagPage;
 import net.simpleframework.module.contacts.web.page.ContactsUtils;
 import net.simpleframework.mvc.PageParameter;
@@ -27,7 +29,7 @@ import net.simpleframework.mvc.component.ui.pager.db.AbstractDbTablePagerHandler
  *         https://github.com/simpleframework
  *         http://www.simpleframework.net
  */
-public class ContactsTPage extends AbstractMgrTPage {
+public class ContactsTPage extends AbstractMgrTPage implements IContactsContextAware {
 	@Override
 	protected void onForward(final PageParameter pp) throws Exception {
 		super.onForward(pp);
@@ -36,17 +38,23 @@ public class ContactsTPage extends AbstractMgrTPage {
 
 		addTablePagerBean(pp);
 
+		// 添加
+		AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
+				ContactsEditPage.class);
+		addWindowBean(pp, "ContactsTPage_edit", ajaxRequest).setTitle($m("ContactsTPage.1"))
+				.setHeight(500).setWidth(620);
+
 		// 标签管理
-		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage",
-				ContactsTagPage.class);
+		ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage", ContactsTagPage.class);
 		addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTagPage.0"))
 				.setHeight(500).setWidth(400);
 	}
 
 	@Override
 	public ElementList getRightElements(final PageParameter pp) {
-		return ElementList.of(LinkButton.addBtn(), SpanElement.SPACE, new LinkButton(
-				$m("ContactsTPage.0")).setOnclick("$Actions['ContactsTPage_tag']();"));
+		return ElementList.of(LinkButton.addBtn().setOnclick("$Actions['ContactsTPage_edit']();"),
+				SpanElement.SPACE,
+				new LinkButton($m("ContactsTPage.0")).setOnclick("$Actions['ContactsTPage_tag']();"));
 	}
 
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
@@ -67,7 +75,7 @@ public class ContactsTPage extends AbstractMgrTPage {
 	public static class ContactsTbl extends AbstractDbTablePagerHandler {
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
-			return super.createDataObjectQuery(cp);
+			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp));
 		}
 
 		@Override
