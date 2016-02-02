@@ -5,16 +5,20 @@ import static net.simpleframework.common.I18n.$m;
 import java.util.Map;
 
 import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
+import net.simpleframework.mvc.common.element.ButtonElement;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
+import net.simpleframework.mvc.common.element.LinkElement;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
 import net.simpleframework.mvc.component.base.validation.EValidatorMethod;
 import net.simpleframework.mvc.component.base.validation.Validator;
+import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
 import net.simpleframework.mvc.component.ui.pager.db.AbstractDbTablePagerHandler;
@@ -50,8 +54,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
 		final TablePagerBean tablePager = (TablePagerBean) super
 				.addTablePagerBean(pp, "ContactsTagPage_tbl", ContactsTagTbl.class).setShowHead(false)
-				.setContainerId("idContactsTagPage_tbl");
-		tablePager.addColumn(new TablePagerColumn("cc"));
+				.setPagerBarLayout(EPagerBarLayout.none).setContainerId("idContactsTagPage_tbl");
+		tablePager.addColumn(new TablePagerColumn("text")).addColumn(TablePagerColumn.OPE(55));
 		return tablePager;
 	}
 
@@ -70,13 +74,35 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 
 	public static class ContactsTagTbl extends AbstractDbTablePagerHandler {
 		@Override
-		protected IDataQuery<?> getDataObjectQuery(final ComponentParameter cp) {
-			return super.getDataObjectQuery(cp);
+		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
+			return _contactsTagService.queryTags(ContactsUtils.getDomainId(cp));
 		}
 
 		@Override
 		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
-			return super.getRowData(cp, dataObject);
+			final ContactsTag tag = (ContactsTag) dataObject;
+			final KVMap kv = new KVMap();
+			kv.add("text", toTitleHTML(cp, tag)).add(TablePagerColumn.OPE, toOpeHTML(cp, tag));
+			return kv;
+		}
+
+		protected String toTitleHTML(final ComponentParameter cp, final ContactsTag tag) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append(new LinkElement(tag.getText())
+					.setOnclick("$Actions['ContactsTagPage_add']('tagId=" + tag.getId() + "');"));
+			final int contacts = tag.getContacts();
+			if (contacts == 0) {
+				sb.append(" (").append(contacts).append(")");
+			}
+			if (cp.isLmanager()) {
+			}
+			return sb.toString();
+		}
+
+		protected String toOpeHTML(final ComponentParameter cp, final ContactsTag tag) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append(ButtonElement.deleteBtn());
+			return sb.toString();
 		}
 	}
 
@@ -107,18 +133,21 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 
 		@Override
 		protected void initPropEditor(final PageParameter pp, final PropEditorBean propEditor) {
-			final ContactsTag tag = _contactsTagService.getBean(pp.getParameter("tag_id"));
+			final ContactsTag tag = _contactsTagService.getBean(pp.getParameter("tagId"));
 			final InputComp tagId = InputComp.hidden("tag_id");
+			final InputComp tag_name = new InputComp("tag_name");
+			final InputComp tag_description = new InputComp("tag_description").setType(
+					EInputCompType.textarea).setAttributes("rows:5");
 			if (tag != null) {
 				tagId.setDefaultValue(tag.getId());
+				tag_name.setDefaultValue(tag.getText());
+
 			}
 
-			final PropField f1 = new PropField($m("AddTagPage.0")).addComponents(tagId, new InputComp(
-					"tag_name"));
+			final PropField f1 = new PropField($m("AddTagPage.0")).addComponents(tagId, tag_name);
 			if (pp.isLmanager()) {
 			}
-			final PropField f2 = new PropField($m("Description")).addComponents(new InputComp(
-					"tag_description").setType(EInputCompType.textarea).setAttributes("rows:5"));
+			final PropField f2 = new PropField($m("Description")).addComponents(tag_description);
 			propEditor.getFormFields().append(f1, f2);
 		}
 	}

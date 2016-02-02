@@ -43,6 +43,7 @@ public class ContactsTPage extends AbstractMgrTPage {
 	protected String toHtml(final PageParameter pp, final Map<String, Object> variables,
 			final String currentVariable) throws IOException {
 		final StringBuilder sb = new StringBuilder();
+
 		return sb.toString();
 	}
 }
