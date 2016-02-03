@@ -1,3 +1,12 @@
+/*-------------------------ContactsTPage--------------------------*/
+#idContactsTPage_tbl {
+  padding: 8px;
+}
+
+/*-------------------------ContactsTagPage--------------------------*/
+#idContactsTagPage_tbl {
+  padding: 6px;
+}
 
 /*-------------------------MyContactsTPage--------------------------*/
 .MyContactsTPage {
@@ -14,11 +23,5 @@
 }
 
 .ContactsEditPage .FormTableRowTemplatePage .form_tbl .l {
-  padding: 6px;
-}
-
-/*-------------------------ContactsTagPage--------------------------*/
-
-#idContactsTagPage_tbl {
   padding: 6px;
 }
