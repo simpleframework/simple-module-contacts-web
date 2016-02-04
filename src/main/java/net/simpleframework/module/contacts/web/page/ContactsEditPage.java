@@ -1,8 +1,10 @@
 package net.simpleframework.module.contacts.web.page;
 
 import static net.simpleframework.common.I18n.$m;
+import net.simpleframework.common.BeanUtils;
 import net.simpleframework.common.Convert;
 import net.simpleframework.ctx.permission.PermissionUser;
+import net.simpleframework.module.contacts.Contacts;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
@@ -13,6 +15,7 @@ import net.simpleframework.mvc.common.element.DictMultiSelectInput;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.InputElement;
 import net.simpleframework.mvc.common.element.LinkButton;
+import net.simpleframework.mvc.common.element.Option;
 import net.simpleframework.mvc.common.element.RowField;
 import net.simpleframework.mvc.common.element.TableRow;
 import net.simpleframework.mvc.common.element.TableRows;
@@ -49,7 +52,10 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		addAjaxRequest(pp, "ContactsEditPage_us_callback").setHandlerMethod("doUserSelect");
 
 		// 表单验证
-		addFormValidationBean(pp).addValidators(new Validator(EValidatorMethod.required, "#ce_text"));
+		addFormValidationBean(pp).addValidators(new Validator(EValidatorMethod.required, "#ce_text"))
+				.addValidators(new Validator(EValidatorMethod.email, "#ce_email"))
+				.addValidators(new Validator(EValidatorMethod.mobile_phone, "#ce_mobile"))
+				.addValidators(new Validator(EValidatorMethod.date, "#ce_birthday", "yyyy-MM-dd"));
 	}
 
 	@Override
@@ -64,9 +70,28 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				.put("dept", user.getDept().toString());
 	}
 
+	protected Contacts createContacts(final PageParameter pp) {
+		return _contactsService.createBean();
+	}
+
 	@Override
 	public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
-		// _accountService.getBean(pp.getParameter("contactsId"))
+		Contacts contacts = _contactsService.getBean(cp.getParameter("ce_id"));
+		final boolean insert = contacts == null;
+		if (insert) {
+			contacts = createContacts(cp);
+		}
+		for (final String prop : new String[] { "text", "postcode", "sex", "dept", "job", "email",
+				"mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin", "workaddress",
+				"homeaddress", "description" }) {
+			BeanUtils.setProperty(contacts, prop, cp.getParameter("ce_" + prop));
+		}
+		contacts.setBirthday(Convert.toDate(cp.getParameter("ce_birthday"), "yyyy-MM-dd"));
+		if (insert) {
+			_contactsService.insert(contacts);
+		} else {
+			_contactsService.update(contacts);
+		}
 		return super.onSave(cp);
 	}
 
@@ -80,7 +105,10 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 	protected TableRows getTableRows(final PageParameter pp) {
 		final InputElement ce_id = InputElement.hidden("ce_id");
 		final InputElement ce_text = new InputElement("ce_text");
-		final InputElement ce_sex = new InputElement("ce_sex");
+		final InputElement ce_postcode = new InputElement("ce_postcode");
+
+		final Option[] opts = Option.from($m("AccountEditPage.16"), $m("AccountEditPage.17"));
+		final InputElement ce_sex = InputElement.select("ce_sex");
 
 		final CalendarInput ce_birthday = new CalendarInput("ce_birthday")
 				.setCalendarComponent("cal_Birthday");
@@ -98,16 +126,37 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final InputElement ce_homephone = new InputElement("ce_homephone");
 		final InputElement ce_qq = new InputElement("ce_qq");
 		final InputElement ce_weixin = new InputElement("ce_weixin");
-		final InputElement ce_postcode = new InputElement("ce_postcode");
 		final InputElement ce_workaddress = new InputElement("ce_workaddress");
 		final InputElement ce_homeaddress = new InputElement("ce_homeaddress");
 		final InputElement ce_description = InputElement.textarea("ce_description").setRows(3);
 
+		final Contacts contacts = _contactsService.getBean(pp.getParameter("contactsId"));
+		if (contacts != null) {
+			ce_id.setVal(contacts.getId());
+			ce_text.setVal(contacts.getText());
+			ce_postcode.setVal(contacts.getPostcode());
+			Option.setSelected(opts, contacts.getSex());
+			ce_birthday.setVal(Convert.toDateString(contacts.getBirthday(), "yyyy-MM-dd"));
+			ce_dept.setVal(contacts.getDept());
+			ce_job.setVal(contacts.getJob());
+			ce_email.setVal(contacts.getEmail());
+			ce_mobile.setVal(contacts.getMobile());
+			ce_workphone.setVal(contacts.getWorkphone());
+			ce_workphone2.setVal(contacts.getWorkphone2());
+			ce_fax.setVal(contacts.getFax());
+			ce_homephone.setVal(contacts.getHomephone());
+			ce_qq.setVal(contacts.getQq());
+			ce_weixin.setVal(contacts.getWeixin());
+			ce_workaddress.setVal(contacts.getWorkaddress());
+			ce_homeaddress.setVal(contacts.getHomeaddress());
+			ce_description.setVal(contacts.getDescription());
+		}
+
 		final TableRow r1 = new TableRow(
 				new RowField($m("ContactsEditPage.0"), ce_id, ce_text).setStarMark(true), new RowField(
 						$m("ContactsEditPage.16"), ce_postcode));
-		final TableRow r2 = new TableRow(new RowField($m("ContactsEditPage.2"), ce_sex),
-				new RowField($m("ContactsEditPage.3"), ce_birthday));
+		final TableRow r2 = new TableRow(new RowField($m("ContactsEditPage.2"),
+				ce_sex.addElements(opts)), new RowField($m("ContactsEditPage.3"), ce_birthday));
 		final TableRow r3 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_dept),
 				new RowField($m("ContactsEditPage.5"), ce_job));
 		final TableRow r4 = new TableRow(new RowField($m("ContactsEditPage.6"), ce_email),
