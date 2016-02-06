@@ -25,6 +25,9 @@ import net.simpleframework.mvc.component.base.validation.EValidatorMethod;
 import net.simpleframework.mvc.component.base.validation.Validator;
 import net.simpleframework.mvc.component.ext.deptselect.DeptSelectBean;
 import net.simpleframework.mvc.component.ext.userselect.UserSelectBean;
+import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
+import net.simpleframework.mvc.component.ui.listbox.ListItem;
+import net.simpleframework.mvc.component.ui.listbox.ListboxBean;
 import net.simpleframework.mvc.template.lets.FormTableRowTemplatePage;
 
 /**
@@ -50,6 +53,12 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				false).setJsSelectCallback("return ContactsEditPage.userSelected(selects)");
 		// 帐号选择Action
 		addAjaxRequest(pp, "ContactsEditPage_us_callback").setHandlerMethod("doUserSelect");
+
+		// tag字典
+		addComponentBean(pp, "ContactsEditPage_tagList", ListboxBean.class).setCheckbox(true)
+				.addListItem(new ListItem(null, "aaa")).addListItem(new ListItem(null, "bbb"));
+		addComponentBean(pp, "ContactsEditPage_tag", DictionaryBean.class).addListboxRef(pp,
+				"ContactsEditPage_tagList").setDestroyOnClose(true);
 
 		// 表单验证
 		addFormValidationBean(pp).addValidators(new Validator(EValidatorMethod.required, "#ce_text"))
@@ -113,7 +122,9 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final CalendarInput ce_birthday = new CalendarInput("ce_birthday")
 				.setCalendarComponent("cal_Birthday");
 
-		final DictMultiSelectInput ce_tags = new DictMultiSelectInput("ce_tags");
+		final DictMultiSelectInput ce_tags = (DictMultiSelectInput) new DictMultiSelectInput(
+				"ce_tags").setDictComponent("ContactsEditPage_tag");
+		// ce_tags.addValue("aa", "dddddd");
 
 		final TextButton ce_dept = new TextButton("ce_dept")
 				.setOnclick("$Actions['ContactsEditPage_deptSelect']();");
