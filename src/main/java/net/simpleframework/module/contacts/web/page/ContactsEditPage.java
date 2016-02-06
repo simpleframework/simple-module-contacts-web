@@ -104,6 +104,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		if (insert) {
 			contacts = createContacts(cp);
 		}
+
 		for (final String prop : new String[] { "text", "postcode", "sex", "dept", "job", "email",
 				"mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin", "workaddress",
 				"homeaddress", "description" }) {
