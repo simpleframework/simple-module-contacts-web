@@ -1,10 +1,21 @@
 package net.simpleframework.module.contacts.web.page;
 
 import static net.simpleframework.common.I18n.$m;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.BeanUtils;
 import net.simpleframework.common.Convert;
+import net.simpleframework.common.ID;
+import net.simpleframework.common.StringUtils;
 import net.simpleframework.ctx.permission.PermissionUser;
 import net.simpleframework.module.contacts.Contacts;
+import net.simpleframework.module.contacts.ContactsTag;
+import net.simpleframework.module.contacts.ContactsTagR;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
@@ -26,7 +37,9 @@ import net.simpleframework.mvc.component.base.validation.Validator;
 import net.simpleframework.mvc.component.ext.deptselect.DeptSelectBean;
 import net.simpleframework.mvc.component.ext.userselect.UserSelectBean;
 import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
+import net.simpleframework.mvc.component.ui.listbox.AbstractListboxHandler;
 import net.simpleframework.mvc.component.ui.listbox.ListItem;
+import net.simpleframework.mvc.component.ui.listbox.ListItems;
 import net.simpleframework.mvc.component.ui.listbox.ListboxBean;
 import net.simpleframework.mvc.template.lets.FormTableRowTemplatePage;
 
@@ -56,9 +69,10 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 		// tag字典
 		addComponentBean(pp, "ContactsEditPage_tagList", ListboxBean.class).setCheckbox(true)
-				.addListItem(new ListItem(null, "aaa")).addListItem(new ListItem(null, "bbb"));
-		addComponentBean(pp, "ContactsEditPage_tag", DictionaryBean.class).addListboxRef(pp,
-				"ContactsEditPage_tagList").setDestroyOnClose(true);
+				.setHandlerClass(TagListbox.class);
+		addComponentBean(pp, "ContactsEditPage_tag", DictionaryBean.class)
+				.addListboxRef(pp, "ContactsEditPage_tagList").setDestroyOnClose(true)
+				.setTitle($m("ContactsEditPage.18"));
 
 		// 表单验证
 		addFormValidationBean(pp).addValidators(new Validator(EValidatorMethod.required, "#ce_text"))
@@ -101,6 +115,34 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		} else {
 			_contactsService.update(contacts);
 		}
+
+		// 同步tag
+		final Map<ID, ContactsTag> adds = new LinkedHashMap<ID, ContactsTag>();
+		for (final String tagId : StringUtils.split(cp.getParameter("ce_tags"))) {
+			final ContactsTag tag = _contactsTagService.getBean(tagId);
+			if (tag != null) {
+				adds.put(tag.getId(), tag);
+			}
+		}
+		final List<ID> removes = new ArrayList<ID>();
+		final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
+		ContactsTagR tagr;
+		while ((tagr = dq.next()) != null) {
+			final ID tagId = tagr.getTagId();
+			if (adds.containsKey(tagId)) {
+				adds.remove(tagId);
+			} else {
+				removes.add(tagr.getId());
+			}
+		}
+
+		for (final ID rid : removes) {
+			_contactsTagRService.delete(rid);
+		}
+		for (final ContactsTag tag : adds.values()) {
+			_contactsTagRService.addSubjectTagR(contacts, tag);
+		}
+
 		return super.onSave(cp);
 	}
 
@@ -124,7 +166,6 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 		final DictMultiSelectInput ce_tags = (DictMultiSelectInput) new DictMultiSelectInput(
 				"ce_tags").setDictComponent("ContactsEditPage_tag");
-		// ce_tags.addValue("aa", "dddddd");
 
 		final TextButton ce_dept = new TextButton("ce_dept")
 				.setOnclick("$Actions['ContactsEditPage_deptSelect']();");
@@ -161,6 +202,13 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			ce_workaddress.setVal(contacts.getWorkaddress());
 			ce_homeaddress.setVal(contacts.getHomeaddress());
 			ce_description.setVal(contacts.getDescription());
+
+			final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
+			ContactsTagR tagr;
+			while ((tagr = dq.next()) != null) {
+				final ContactsTag tag = _contactsTagService.getBean(tagr.getTagId());
+				ce_tags.addValue(Convert.toString(tag.getId()), tag.getText());
+			}
 		}
 
 		final TableRow r1 = new TableRow(
@@ -195,5 +243,19 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 	@Override
 	public String getLabelWidth(final PageParameter pp) {
 		return "80px";
+	}
+
+	public static class TagListbox extends AbstractListboxHandler {
+
+		@Override
+		public ListItems getListItems(final ComponentParameter cp) {
+			final ListItems items = ListItems.of();
+			final IDataQuery<ContactsTag> dq = _contactsTagService.queryTags(cp.getLDomainId());
+			ContactsTag tag;
+			while ((tag = dq.next()) != null) {
+				items.add(new ListItem((ListboxBean) cp.componentBean, tag.getText()).setId(tag.getId()));
+			}
+			return items;
+		}
 	}
 }
