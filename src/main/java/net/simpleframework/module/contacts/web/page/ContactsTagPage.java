@@ -8,7 +8,9 @@ import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.ctx.permission.PermissionDept;
+import net.simpleframework.ctx.trans.Transaction;
 import net.simpleframework.module.contacts.ContactsTag;
+import net.simpleframework.module.contacts.IContactsContext;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.mvc.AbstractMVCPage;
 import net.simpleframework.mvc.IForward;
@@ -62,6 +64,7 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		addDeleteAjaxRequest(pp, "ContactsTagPage_del");
 	}
 
+	@Transaction(context = IContactsContext.class)
 	public IForward doDelete(final ComponentParameter cp) {
 		final Object[] ids = StringUtils.split(cp.getParameter("id"));
 		_contactsTagService.delete(ids);
