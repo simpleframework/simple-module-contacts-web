@@ -13,9 +13,11 @@ import net.simpleframework.common.Convert;
 import net.simpleframework.common.ID;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.ctx.permission.PermissionUser;
+import net.simpleframework.ctx.trans.Transaction;
 import net.simpleframework.module.contacts.Contacts;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.module.contacts.ContactsTagR;
+import net.simpleframework.module.contacts.IContactsContext;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
@@ -97,6 +99,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		return _contactsService.createBean();
 	}
 
+	@Transaction(context = IContactsContext.class)
 	@Override
 	public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
 		Contacts contacts = _contactsService.getBean(cp.getParameter("ce_id"));
