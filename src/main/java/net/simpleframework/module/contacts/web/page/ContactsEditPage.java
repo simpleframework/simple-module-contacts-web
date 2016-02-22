@@ -147,7 +147,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			_contactsTagRService.addSubjectTagR(contacts, tag);
 		}
 
-		return super.onSave(cp);
+		return super.onSave(cp).append("$Actions['ContactsTPage_tbl']();");
 	}
 
 	@Override

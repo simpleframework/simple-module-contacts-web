@@ -3,6 +3,16 @@
   padding: 8px;
 }
 
+#idContactsTPage_tbl .contact-tag {
+  background-color: #ddd;
+  display: inline-block;
+  margin-right: 8px;
+  padding: 3px 9px;
+  -moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
 /*-------------------------ContactsTagPage--------------------------*/
 #idContactsTagPage_tbl {
   padding: 6px;

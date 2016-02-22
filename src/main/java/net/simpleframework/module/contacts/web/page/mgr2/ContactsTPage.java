@@ -6,13 +6,20 @@ import java.io.IOException;
 import java.util.Map;
 
 import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.KVMap;
+import net.simpleframework.ctx.trans.Transaction;
 import net.simpleframework.module.common.web.page.AbstractMgrTPage;
 import net.simpleframework.module.contacts.Contacts;
+import net.simpleframework.module.contacts.ContactsTag;
+import net.simpleframework.module.contacts.ContactsTagR;
+import net.simpleframework.module.contacts.IContactsContext;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.module.contacts.web.page.ContactsEditPage;
 import net.simpleframework.module.contacts.web.page.ContactsTagPage;
 import net.simpleframework.module.contacts.web.page.ContactsUtils;
+import net.simpleframework.mvc.IForward;
+import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ButtonElement;
 import net.simpleframework.mvc.common.element.ElementList;
@@ -47,6 +54,9 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		addWindowBean(pp, "ContactsTPage_edit", ajaxRequest).setTitle($m("ContactsTPage.1"))
 				.setHeight(500).setWidth(620);
 
+		// 删除
+		addDeleteAjaxRequest(pp, "ContactsTPage_del");
+
 		// 标签管理
 		ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage", ContactsTagPage.class);
 		addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTagPage.0"))
@@ -66,11 +76,20 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
 		tablePager
 				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 120).setSort(false))
-				.addColumn(new TablePagerColumn("desc", $m("ContactsTPage.3")).setFilterSort(false))
+				.addColumn(
+						new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
+								"line-height:1.6;color:#666;").setFilterSort(false))
 				.addColumn(
 						new TablePagerColumn("tags", $m("ContactsTPage.4"), 280).setFilterSort(false))
 				.addColumn(TablePagerColumn.OPE(110));
 		return tablePager;
+	}
+
+	@Transaction(context = IContactsContext.class)
+	public IForward doDelete(final ComponentParameter cp) {
+		final Object[] ids = StringUtils.split(cp.getParameter("id"));
+		_contactsService.delete(ids);
+		return new JavascriptForward("$Actions['ContactsTPage_tbl']();");
 	}
 
 	@Override
@@ -92,13 +111,38 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			final Contacts contacts = (Contacts) dataObject;
 			final KVMap row = new KVMap();
 			row.add("text", contacts.getText()).add("desc", toDescHTML(cp, contacts))
+					.add("tags", toTagsHTML(cp, contacts))
 					.add(TablePagerColumn.OPE, toOpeHTML(cp, contacts));
 			return row;
 		}
 
+		protected String toTagsHTML(final ComponentParameter cp, final Contacts contacts) {
+			final StringBuilder sb = new StringBuilder();
+			final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
+			ContactsTagR tagr;
+			while ((tagr = dq.next()) != null) {
+				final ContactsTag tag = _contactsTagService.getBean(tagr.getTagId());
+				if (tag != null) {
+					sb.append(new SpanElement(tag).setClassName("contact-tag"));
+				}
+			}
+			return sb.toString();
+		}
+
 		protected String toDescHTML(final ComponentParameter cp, final Contacts contacts) {
 			final StringBuilder sb = new StringBuilder();
-
+			final String address = contacts.getWorkaddress();
+			if (StringUtils.hasText(address)) {
+				sb.append(address).append("<br>");
+			}
+			final String mobile = contacts.getMobile();
+			if (StringUtils.hasText(mobile)) {
+				sb.append(mobile).append(", ");
+			}
+			final String email = contacts.getEmail();
+			if (StringUtils.hasText(email)) {
+				sb.append(email);
+			}
 			return sb.toString();
 		}
 
@@ -107,7 +151,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			sb.append(ButtonElement.editBtn().setOnclick(
 					"$Actions['ContactsTPage_edit']('contactsId=" + contacts.getId() + "');"));
 			sb.append(SpanElement.SPACE);
-			sb.append(ButtonElement.deleteBtn());
+			sb.append(ButtonElement.deleteBtn().setOnclick("$Actions['ContactsTPage_del']();"));
 			return sb.toString();
 		}
 	}
