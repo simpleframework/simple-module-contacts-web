@@ -50,6 +50,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		super.onForward(pp);
 
 		pp.addImportCSS(ContactsUtils.class, "/contacts.css");
+		pp.addImportJavascript(ContactsUtils.class, "/js/contacts.js");
 
 		addTablePagerBean(pp);
 
@@ -129,7 +130,16 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	public static class ContactsTbl extends AbstractDbTablePagerHandler {
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
-			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp));
+			final ArrayList<ContactsTag> list = new ArrayList<ContactsTag>();
+			for (final String tagId : ArrayUtils
+					.asSet(StringUtils.split(cp.getParameter("tags"), ";"))) {
+				final ContactsTag tag = _contactsTagService.getBean(tagId);
+				if (tag != null) {
+					list.add(tag);
+				}
+			}
+			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp),
+					list.toArray(new ContactsTag[list.size()]));
 		}
 
 		@Override
