@@ -9,5 +9,5 @@ import net.simpleframework.module.contacts.impl.ContactsContext;
  *         https://github.com/simpleframework
  *         http://www.simpleframework.net
  */
-public class ContactsWebContext extends ContactsContext {
+public class ContactsWebContext extends ContactsContext implements IContactsWebContext {
 }

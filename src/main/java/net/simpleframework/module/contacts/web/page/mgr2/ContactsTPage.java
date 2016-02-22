@@ -3,10 +3,13 @@ package net.simpleframework.module.contacts.web.page.mgr2;
 import static net.simpleframework.common.I18n.$m;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.StringUtils;
+import net.simpleframework.common.coll.ArrayUtils;
 import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.ctx.trans.Transaction;
 import net.simpleframework.module.common.web.page.AbstractMgrTPage;
@@ -31,6 +34,8 @@ import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
 import net.simpleframework.mvc.component.ui.pager.db.AbstractDbTablePagerHandler;
+import net.simpleframework.mvc.template.struct.FilterButton;
+import net.simpleframework.mvc.template.struct.FilterButtons;
 
 /**
  * Licensed under the Apache License, Version 2.0
@@ -61,6 +66,11 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage", ContactsTagPage.class);
 		addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTagPage.0"))
 				.setHeight(500).setWidth(400);
+	}
+
+	@Override
+	protected String getPageCSS(final PageParameter pp) {
+		return "ContactsTPage";
 	}
 
 	@Override
@@ -96,6 +106,22 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	protected String toHtml(final PageParameter pp, final Map<String, Object> variables,
 			final String currentVariable) throws IOException {
 		final StringBuilder sb = new StringBuilder();
+		final FilterButtons btns = FilterButtons.of();
+		final Set<String> tags = ArrayUtils.asSet(StringUtils.split(pp.getParameter("tags"), ";"));
+		for (final String tagId : tags) {
+			final ContactsTag tag = _contactsTagService.getBean(tagId);
+			if (tag != null) {
+				final ArrayList<String> _tags = new ArrayList<String>(tags);
+				_tags.remove(tagId);
+				btns.append(new FilterButton(tag).setOndelete("$Actions.reloc('tags="
+						+ StringUtils.join(_tags, ";") + "')"));
+			}
+		}
+		if (btns.size() > 0) {
+			sb.append("<div class='contact-filter'>");
+			sb.append(btns);
+			sb.append("</div>");
+		}
 		sb.append("<div id='idContactsTPage_tbl'></div>");
 		return sb.toString();
 	}
@@ -120,10 +146,14 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			final StringBuilder sb = new StringBuilder();
 			final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
 			ContactsTagR tagr;
+			final Set<String> tags = ArrayUtils.asSet(StringUtils.split(cp.getParameter("tags"), ";"));
 			while ((tagr = dq.next()) != null) {
 				final ContactsTag tag = _contactsTagService.getBean(tagr.getTagId());
 				if (tag != null) {
-					sb.append(new SpanElement(tag).setClassName("contact-tag"));
+					final ArrayList<String> _tags = new ArrayList<String>(tags);
+					_tags.add(String.valueOf(tag.getId()));
+					sb.append(new SpanElement(tag).setClassName("contact-tag").setOnclick(
+							"$Actions.reloc('tags=" + StringUtils.join(_tags, ";") + "');"));
 				}
 			}
 			return sb.toString();
@@ -151,7 +181,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			sb.append(ButtonElement.editBtn().setOnclick(
 					"$Actions['ContactsTPage_edit']('contactsId=" + contacts.getId() + "');"));
 			sb.append(SpanElement.SPACE);
-			sb.append(ButtonElement.deleteBtn().setOnclick("$Actions['ContactsTPage_del']();"));
+			sb.append(ButtonElement.deleteBtn().setOnclick(
+					"$Actions['ContactsTPage_del']('id=" + contacts.getId() + "');"));
 			return sb.toString();
 		}
 	}
