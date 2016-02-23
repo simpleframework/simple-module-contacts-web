@@ -111,9 +111,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			contacts = _contactsService.createBean();
 		}
 
-		for (final String prop : new String[] { "text", "postcode", "sex", "dept", "job", "email",
-				"mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin", "workaddress",
-				"homeaddress", "description" }) {
+		for (final String prop : _PROPs) {
 			BeanUtils.setProperty(contacts, prop, cp.getParameter("ce_" + prop));
 		}
 		contacts.setBirthday(Convert.toDate(cp.getParameter("ce_birthday"), "yyyy-MM-dd"));
@@ -124,6 +122,17 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		}
 
 		// 同步tag
+		syncTags(cp, contacts);
+
+		return new JavascriptForward(
+				"$Actions['ContactsTPage_edit'].close(); $Actions['ContactsTPage_tbl']();");
+	}
+
+	protected static String[] _PROPs = new String[] { "text", "postcode", "sex", "dept", "job",
+			"email", "mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin",
+			"workaddress", "homeaddress", "description" };
+
+	protected void syncTags(final ComponentParameter cp, final Contacts contacts) {
 		final Map<ID, ContactsTag> adds = new LinkedHashMap<ID, ContactsTag>();
 		for (final String tagId : StringUtils.split(cp.getParameter("ce_tags"))) {
 			final ContactsTag tag = _contactsTagService.getBean(tagId);
@@ -149,8 +158,6 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		for (final ContactsTag tag : adds.values()) {
 			_contactsTagRService.addSubjectTagR(contacts, tag);
 		}
-
-		return super.onSave(cp).append("$Actions['ContactsTPage_tbl']();");
 	}
 
 	@Override

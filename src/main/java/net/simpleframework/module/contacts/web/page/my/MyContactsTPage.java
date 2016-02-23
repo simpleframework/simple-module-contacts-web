@@ -1,13 +1,21 @@
 package net.simpleframework.module.contacts.web.page.my;
 
 import static net.simpleframework.common.I18n.$m;
+
+import java.util.ArrayList;
+
+import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.common.StringUtils;
+import net.simpleframework.common.coll.ArrayUtils;
 import net.simpleframework.module.contacts.IContactsContextAware;
+import net.simpleframework.module.contacts.MyContactsTag;
 import net.simpleframework.module.contacts.web.page.ContactsUtils;
 import net.simpleframework.module.contacts.web.page.mgr2.ContactsTPage.ContactsTbl;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
 import net.simpleframework.mvc.common.element.SpanElement;
+import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
 import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
@@ -77,5 +85,23 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	}
 
 	public static class _ContactsTbl extends ContactsTbl {
+
+		@Override
+		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
+			final ArrayList<MyContactsTag> list = new ArrayList<MyContactsTag>();
+			final String tags = cp.getParameter("tags");
+			if (StringUtils.hasText(tags)) {
+				cp.addFormParameter("tags", tags);
+
+				for (final String tagId : ArrayUtils.asSet(StringUtils.split(tags, ";"))) {
+					final MyContactsTag tag = _mycontactsTagService.getBean(tagId);
+					if (tag != null) {
+						list.add(tag);
+					}
+				}
+			}
+			return _mycontactsService.queryMyContacts(cp.getLoginId(),
+					list.toArray(new MyContactsTag[list.size()]));
+		}
 	}
 }
