@@ -102,17 +102,13 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				.put("description", user.getDescription());
 	}
 
-	protected Contacts createContacts(final PageParameter pp) {
-		return _contactsService.createBean();
-	}
-
 	@Transaction(context = IContactsContext.class)
 	@Override
 	public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
 		Contacts contacts = _contactsService.getBean(cp.getParameter("ce_id"));
 		final boolean insert = contacts == null;
 		if (insert) {
-			contacts = createContacts(cp);
+			contacts = _contactsService.createBean();
 		}
 
 		for (final String prop : new String[] { "text", "postcode", "sex", "dept", "job", "email",

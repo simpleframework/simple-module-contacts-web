@@ -59,13 +59,6 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		addDeleteAjaxRequest(pp, "ContactsTagPage_del");
 	}
 
-	@Transaction(context = IContactsContext.class)
-	public IForward doDelete(final ComponentParameter cp) {
-		final Object[] ids = StringUtils.split(cp.getParameter("id"));
-		_contactsTagService.delete(ids);
-		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
-	}
-
 	protected void addTagEditComponent(final PageParameter pp) {
 		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTagPage_addPage",
 				AddTagPage.class);
@@ -84,6 +77,13 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 	@Override
 	public ElementList getLeftElements(final PageParameter pp) {
 		return ElementList.of(LinkButton.addBtn().setOnclick("$Actions['ContactsTagPage_add']();"));
+	}
+
+	@Transaction(context = IContactsContext.class)
+	public IForward doDelete(final ComponentParameter cp) {
+		final Object[] ids = StringUtils.split(cp.getParameter("id"));
+		_contactsTagService.delete(ids);
+		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
 	}
 
 	@Override
@@ -141,6 +141,7 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 					new Validator(EValidatorMethod.required, "#tag_name"));
 		}
 
+		@Transaction(context = IContactsContext.class)
 		@Override
 		public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
 			ContactsTag tag = _contactsTagService.getBean(cp.getParameter("tag_id"));
@@ -160,7 +161,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 			} else {
 				_contactsTagService.update(tag);
 			}
-			return super.onSave(cp).append("$Actions['ContactsTagPage_tbl']();");
+			return new JavascriptForward(
+					"$Actions['ContactsTagPage_add'].close(); $Actions['ContactsTagPage_tbl']();");
 		}
 
 		@Override
@@ -178,7 +180,7 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 
 			final PropFields fields = propEditor.getFormFields();
 			fields.add(new PropField($m("AddTagPage.0")).addComponents(tagId, tag_name));
-			if (pp.isLmanager()) {
+			if (isShowOrgEdit(pp)) {
 				pp.addComponentBean("ContactsTagPage_deptSelect", DeptSelectBean.class).setOrg(true)
 						.setBindingId("org_id").setBindingText("org_text");
 				final InputComp org_id = InputComp.hidden("org_id");
@@ -197,6 +199,10 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 				fields.add(new PropField($m("AddTagPage.1")).addComponents(org_id, org_text));
 			}
 			fields.add(new PropField($m("Description")).addComponents(tag_description));
+		}
+
+		protected boolean isShowOrgEdit(final PageParameter pp) {
+			return pp.isLmanager();
 		}
 	}
 }
