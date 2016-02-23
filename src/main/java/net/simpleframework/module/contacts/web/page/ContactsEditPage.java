@@ -261,7 +261,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		@Override
 		public ListItems getListItems(final ComponentParameter cp) {
 			final ListItems items = ListItems.of();
-			final IDataQuery<ContactsTag> dq = _contactsTagService.queryTags(cp.getLDomainId());
+			final IDataQuery<ContactsTag> dq = _contactsTagService.queryOrgTags(ContactsUtils
+					.getDomainId(cp));
 			ContactsTag tag;
 			while ((tag = dq.next()) != null) {
 				items.add(new ListItem((ListboxBean) cp.componentBean, tag.getText()).setId(tag.getId()));

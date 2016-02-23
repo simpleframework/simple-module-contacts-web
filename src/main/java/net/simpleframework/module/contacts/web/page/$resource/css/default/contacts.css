@@ -1,9 +1,14 @@
+/*-------------------------ContactsTagPage--------------------------*/
+#idContactsTagPage_tbl {
+  padding: 6px;
+}
+
 /*-------------------------ContactsTPage--------------------------*/
-#idContactsTPage_tbl {
+.ContactsTPage .Tabs_BlankPage .Tabs_cc {
   padding: 8px;
 }
 
-#idContactsTPage_tbl .contact-tag {
+.contact-tag {
   background-color: #ddd;
   display: inline-block;
   margin-right: 8px;
@@ -14,15 +19,10 @@
   border-radius: 3px;
 }
 
-.ContactsTPage .contact-filter {
+.contact-filter {
   background-color: #f5f5f5;
   border-bottom: 1px solid #ccc;
   padding: 4px 10px;
-}
-
-/*-------------------------ContactsTagPage--------------------------*/
-#idContactsTagPage_tbl {
-  padding: 6px;
 }
 
 /*-------------------------MyContactsTPage--------------------------*/
@@ -39,6 +39,7 @@
   padding: 10px;
 }
 
+/*-------------------------ContactsEditPage--------------------------*/
 .ContactsEditPage .FormTableRowTemplatePage .form_tbl .l {
   padding: 6px;
 }

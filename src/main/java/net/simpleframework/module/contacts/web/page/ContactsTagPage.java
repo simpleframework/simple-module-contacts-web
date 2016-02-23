@@ -53,13 +53,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		super.onForward(pp);
 
 		addTablePagerBean(pp);
-
 		// 添加
-		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTagPage_addPage",
-				AddTagPage.class);
-		addWindowBean(pp, "ContactsTagPage_add", ajaxRequest).setTitle($m("ContactsTagPage.0"))
-				.setHeight(300).setWidth(360);
-
+		addTagEditComponent(pp);
 		// 删除
 		addDeleteAjaxRequest(pp, "ContactsTagPage_del");
 	}
@@ -69,6 +64,13 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		final Object[] ids = StringUtils.split(cp.getParameter("id"));
 		_contactsTagService.delete(ids);
 		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
+	}
+
+	protected void addTagEditComponent(final PageParameter pp) {
+		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTagPage_addPage",
+				AddTagPage.class);
+		addWindowBean(pp, "ContactsTagPage_add", ajaxRequest).setTitle($m("ContactsTagPage.0"))
+				.setHeight(300).setWidth(360);
 	}
 
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
@@ -95,7 +97,7 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 	public static class ContactsTagTbl extends AbstractDbTablePagerHandler {
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
-			return _contactsTagService.queryTags(ContactsUtils.getDomainId(cp));
+			return _contactsTagService.queryOrgTags(ContactsUtils.getDomainId(cp));
 		}
 
 		@Override
