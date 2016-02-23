@@ -132,8 +132,9 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
 			final ArrayList<ContactsTag> list = new ArrayList<ContactsTag>();
-			for (final String tagId : ArrayUtils
-					.asSet(StringUtils.split(cp.getParameter("tags"), ";"))) {
+			final String tags = cp.getParameter("tags");
+			cp.addFormParameter("tags", tags);
+			for (final String tagId : ArrayUtils.asSet(StringUtils.split(tags, ";"))) {
 				final ContactsTag tag = _contactsTagService.getBean(tagId);
 				if (tag != null) {
 					list.add(tag);
