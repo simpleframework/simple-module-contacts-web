@@ -90,9 +90,16 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 	public IForward doUserSelect(final ComponentParameter cp) {
 		final PermissionUser user = cp.getUser(cp.getParameter("userId"));
-		return new JsonForward().put("text", user.getText())
+		return new JsonForward().put("text", user.getText()).put("sex", user.getSex())
 				.put("birthday", Convert.toDateString(user.getBirthday(), "yyyy-MM-dd"))
-				.put("dept", user.getDept().toString());
+				.put("dept", user.getDept().toString()).put("job", user.getNick())
+				.put("mobile", user.getMobile()).put("email", user.getEmail())
+				.put("workphone", user.getProperty("officePhone"))
+				.put("homephone", user.getProperty("homePhone"))
+				.put("workaddress", user.getProperty("address"))
+				.put("homeaddress", user.getProperty("hometown"))
+				.put("postcode", user.getProperty("postcode"))
+				.put("description", user.getDescription());
 	}
 
 	protected Contacts createContacts(final PageParameter pp) {

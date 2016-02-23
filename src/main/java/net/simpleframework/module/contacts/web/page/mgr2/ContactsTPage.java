@@ -45,6 +45,7 @@ import net.simpleframework.mvc.template.struct.FilterButtons;
  *         http://www.simpleframework.net
  */
 public class ContactsTPage extends AbstractMgrTPage implements IContactsContextAware {
+
 	@Override
 	protected void onForward(final PageParameter pp) throws Exception {
 		super.onForward(pp);
