@@ -1,6 +1,6 @@
 package net.simpleframework.module.contacts.web.component.select;
 
-import net.simpleframework.mvc.component.ui.dictionary.IDictionaryHandle;
+import net.simpleframework.mvc.DefaultPageHandler;
 
 /**
  * Licensed under the Apache License, Version 2.0
@@ -9,5 +9,5 @@ import net.simpleframework.mvc.component.ui.dictionary.IDictionaryHandle;
  *         https://github.com/simpleframework
  *         http://www.simpleframework.net
  */
-public interface IContactsSelectHandler extends IDictionaryHandle {
+public class ContactsSelectLoaded extends DefaultPageHandler {
 }

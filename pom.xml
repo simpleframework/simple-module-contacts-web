@@ -20,5 +20,12 @@
       <groupId>net.simpleframework</groupId>
       <artifactId>simple-module-contacts-service</artifactId>
     </dependency>
+    
+    <!-- web容器包 -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>
