@@ -4,6 +4,7 @@ import static net.simpleframework.common.I18n.$m;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.ArrayUtils;
 import net.simpleframework.common.coll.KVMap;
+import net.simpleframework.ctx.service.ado.db.IDbBeanService;
 import net.simpleframework.ctx.trans.Transaction;
 import net.simpleframework.module.common.web.page.AbstractMgrTPage;
 import net.simpleframework.module.contacts.Contacts;
@@ -129,22 +131,32 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	}
 
 	public static class ContactsTbl extends AbstractDbTablePagerHandler {
+
+		protected IDbBeanService<?> getContactsTagService() {
+			return _contactsTagService;
+		}
+
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
+			final List<?> list = getTags(cp);
+			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp),
+					list.toArray(new ContactsTag[list.size()]));
+		}
+
+		protected List<?> getTags(final ComponentParameter cp) {
 			final ArrayList<ContactsTag> list = new ArrayList<ContactsTag>();
 			final String tags = cp.getParameter("tags");
 			if (StringUtils.hasText(tags)) {
 				cp.addFormParameter("tags", tags);
 
 				for (final String tagId : ArrayUtils.asSet(StringUtils.split(tags, ";"))) {
-					final ContactsTag tag = _contactsTagService.getBean(tagId);
+					final ContactsTag tag = (ContactsTag) getContactsTagService().getBean(tagId);
 					if (tag != null) {
 						list.add(tag);
 					}
 				}
 			}
-			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp),
-					list.toArray(new ContactsTag[list.size()]));
+			return list;
 		}
 
 		@Override
@@ -163,10 +175,13 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			ContactsTagR tagr;
 			final Set<String> tags = ArrayUtils.asSet(StringUtils.split(cp.getParameter("tags"), ";"));
 			while ((tagr = dq.next()) != null) {
-				final ContactsTag tag = _contactsTagService.getBean(tagr.getTagId());
+				final ContactsTag tag = (ContactsTag) getContactsTagService().getBean(tagr.getTagId());
 				if (tag != null) {
 					final ArrayList<String> _tags = new ArrayList<String>(tags);
-					_tags.add(String.valueOf(tag.getId()));
+					final String _tagId = String.valueOf(tag.getId());
+					if (!_tags.contains(_tagId)) {
+						_tags.add(_tagId);
+					}
 					sb.append(new SpanElement(tag).setClassName("contact-tag").setOnclick(
 							"$Actions.reloc('tags=" + StringUtils.join(_tags, ";") + "');"));
 				}

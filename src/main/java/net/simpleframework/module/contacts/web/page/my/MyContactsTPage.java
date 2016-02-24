@@ -2,11 +2,10 @@ package net.simpleframework.module.contacts.web.page.my;
 
 import static net.simpleframework.common.I18n.$m;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import net.simpleframework.ado.query.IDataQuery;
-import net.simpleframework.common.StringUtils;
-import net.simpleframework.common.coll.ArrayUtils;
+import net.simpleframework.ctx.service.ado.db.IDbBeanService;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.module.contacts.MyContactsTag;
 import net.simpleframework.module.contacts.web.page.ContactsUtils;
@@ -83,21 +82,14 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	}
 
 	public static class _ContactsTbl extends ContactsTbl {
+		@Override
+		protected IDbBeanService<?> getContactsTagService() {
+			return _mycontactsTagService;
+		}
 
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
-			final ArrayList<MyContactsTag> list = new ArrayList<MyContactsTag>();
-			final String tags = cp.getParameter("tags");
-			if (StringUtils.hasText(tags)) {
-				cp.addFormParameter("tags", tags);
-
-				for (final String tagId : ArrayUtils.asSet(StringUtils.split(tags, ";"))) {
-					final MyContactsTag tag = _mycontactsTagService.getBean(tagId);
-					if (tag != null) {
-						list.add(tag);
-					}
-				}
-			}
+			final List<?> list = getTags(cp);
 			return _mycontactsService.queryMyContacts(cp.getLoginId(),
 					list.toArray(new MyContactsTag[list.size()]));
 		}
