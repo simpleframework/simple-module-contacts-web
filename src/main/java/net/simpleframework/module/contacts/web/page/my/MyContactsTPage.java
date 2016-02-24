@@ -5,11 +5,16 @@ import static net.simpleframework.common.I18n.$m;
 import java.util.List;
 
 import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.common.StringUtils;
 import net.simpleframework.ctx.service.ado.db.IDbBeanService;
+import net.simpleframework.ctx.trans.Transaction;
+import net.simpleframework.module.contacts.IContactsContext;
 import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.module.contacts.MyContactsTag;
 import net.simpleframework.module.contacts.web.page.ContactsUtils;
 import net.simpleframework.module.contacts.web.page.mgr2.ContactsTPage.ContactsTbl;
+import net.simpleframework.mvc.IForward;
+import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
@@ -39,6 +44,9 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 
 		// 添加表格
 		addTablePagerBean(pp);
+
+		// 删除
+		addDeleteAjaxRequest(pp, "ContactsTPage_del");
 
 		// 编辑窗口
 		AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
@@ -74,9 +82,17 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 				new LinkButton($m("ContactsTPage.0")).setOnclick("$Actions['ContactsTPage_tag']();"));
 	}
 
+	@Transaction(context = IContactsContext.class)
+	public IForward doDelete(final ComponentParameter cp) {
+		final Object[] ids = StringUtils.split(cp.getParameter("id"));
+		_mycontactsService.delete(ids);
+		return new JavascriptForward("$Actions['ContactsTPage_tbl']();");
+	}
+
 	@Override
 	protected String toContentHTML(final PageParameter pp) {
 		final StringBuilder sb = new StringBuilder();
+		sb.append(ContactsUtils.toContactFilterHTML(pp, _mycontactsTagService));
 		sb.append("<div id='idContactsTPage_tbl'></div>");
 		return sb.toString();
 	}

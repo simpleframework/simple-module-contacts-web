@@ -36,8 +36,6 @@ import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
 import net.simpleframework.mvc.component.ui.pager.db.AbstractDbTablePagerHandler;
-import net.simpleframework.mvc.template.struct.FilterButton;
-import net.simpleframework.mvc.template.struct.FilterButtons;
 
 /**
  * Licensed under the Apache License, Version 2.0
@@ -57,14 +55,14 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 		addTablePagerBean(pp);
 
+		// 删除
+		addDeleteAjaxRequest(pp, "ContactsTPage_del");
+
 		// 添加
 		AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
 				ContactsEditPage.class);
 		addWindowBean(pp, "ContactsTPage_edit", ajaxRequest).setTitle($m("ContactsTPage.1"))
 				.setHeight(500).setWidth(620);
-
-		// 删除
-		addDeleteAjaxRequest(pp, "ContactsTPage_del");
 
 		// 标签管理
 		ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage", ContactsTagPage.class);
@@ -110,22 +108,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	protected String toHtml(final PageParameter pp, final Map<String, Object> variables,
 			final String currentVariable) throws IOException {
 		final StringBuilder sb = new StringBuilder();
-		final FilterButtons btns = FilterButtons.of();
-		final Set<String> tags = ArrayUtils.asSet(StringUtils.split(pp.getParameter("tags"), ";"));
-		for (final String tagId : tags) {
-			final ContactsTag tag = _contactsTagService.getBean(tagId);
-			if (tag != null) {
-				final ArrayList<String> _tags = new ArrayList<String>(tags);
-				_tags.remove(tagId);
-				btns.append(new FilterButton(tag).setOndelete("$Actions.reloc('tags="
-						+ StringUtils.join(_tags, ";") + "')"));
-			}
-		}
-		if (btns.size() > 0) {
-			sb.append("<div class='contact-filter'>");
-			sb.append(btns);
-			sb.append("</div>");
-		}
+		sb.append(ContactsUtils.toContactFilterHTML(pp, _contactsTagService));
 		sb.append("<div id='idContactsTPage_tbl'></div>");
 		return sb.toString();
 	}
