@@ -1,17 +1,16 @@
 package net.simpleframework.module.contacts.web.page.my;
 
-import static net.simpleframework.common.I18n.$m;
 import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.ctx.trans.Transaction;
 import net.simpleframework.module.contacts.IContactsContext;
 import net.simpleframework.module.contacts.MyContactsTag;
 import net.simpleframework.module.contacts.web.page.ContactsTagPage;
+import net.simpleframework.mvc.AbstractMVCPage;
 import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.component.ComponentParameter;
-import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 
 /**
@@ -24,16 +23,13 @@ import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 public class MyContactsTagPage extends ContactsTagPage {
 
 	@Override
-	protected void addTagEditComponent(final PageParameter pp) {
-		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTagPage_addPage",
-				_AddTagPage.class);
-		addWindowBean(pp, "ContactsTagPage_add", ajaxRequest).setTitle($m("ContactsTagPage.0"))
-				.setHeight(300).setWidth(360);
+	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
+		return (TablePagerBean) super.addTablePagerBean(pp).setHandlerClass(_ContactsTagTbl.class);
 	}
 
 	@Override
-	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
-		return (TablePagerBean) super.addTablePagerBean(pp).setHandlerClass(_ContactsTagTbl.class);
+	protected Class<? extends AbstractMVCPage> getTagEditClass(final PageParameter pp) {
+		return _AddTagPage.class;
 	}
 
 	@Override

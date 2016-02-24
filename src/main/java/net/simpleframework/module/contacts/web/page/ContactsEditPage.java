@@ -40,6 +40,7 @@ import net.simpleframework.mvc.component.ext.deptselect.DeptSelectBean;
 import net.simpleframework.mvc.component.ext.userselect.UserSelectBean;
 import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
 import net.simpleframework.mvc.component.ui.listbox.AbstractListboxHandler;
+import net.simpleframework.mvc.component.ui.listbox.IListboxHandler;
 import net.simpleframework.mvc.component.ui.listbox.ListItem;
 import net.simpleframework.mvc.component.ui.listbox.ListItems;
 import net.simpleframework.mvc.component.ui.listbox.ListboxBean;
@@ -71,7 +72,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 		// tag字典
 		addComponentBean(pp, "ContactsEditPage_tagList", ListboxBean.class).setCheckbox(true)
-				.setHandlerClass(TagListbox.class);
+				.setHandlerClass(getTagSelectClass(pp));
 		addComponentBean(pp, "ContactsEditPage_tag", DictionaryBean.class)
 				.addListboxRef(pp, "ContactsEditPage_tagList").setDestroyOnClose(true)
 				.setTitle($m("ContactsEditPage.18"));
@@ -81,6 +82,10 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				.addValidators(new Validator(EValidatorMethod.email, "#ce_email"))
 				.addValidators(new Validator(EValidatorMethod.mobile_phone, "#ce_mobile"))
 				.addValidators(new Validator(EValidatorMethod.date, "#ce_birthday", "yyyy-MM-dd"));
+	}
+
+	protected Class<? extends IListboxHandler> getTagSelectClass(final PageParameter pp) {
+		return TagListbox.class;
 	}
 
 	@Override
@@ -109,6 +114,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final boolean insert = contacts == null;
 		if (insert) {
 			contacts = _contactsService.createBean();
+			contacts.setOrgId(ContactsUtils.getDomainId(cp));
 		}
 
 		for (final String prop : _PROPs) {

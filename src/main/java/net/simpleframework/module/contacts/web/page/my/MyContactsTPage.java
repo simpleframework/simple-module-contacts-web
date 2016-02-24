@@ -78,9 +78,7 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	@Override
 	protected String toContentHTML(final PageParameter pp) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("<div class='cc'>");
-		sb.append(" <div id='idContactsTPage_tbl'></div>");
-		sb.append("</div>");
+		sb.append("<div id='idContactsTPage_tbl'></div>");
 		return sb.toString();
 	}
 

@@ -53,17 +53,19 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		super.onForward(pp);
 
 		addTablePagerBean(pp);
+
 		// 添加
-		addTagEditComponent(pp);
+		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTagPage_addPage",
+				getTagEditClass(pp));
+		addWindowBean(pp, "ContactsTagPage_add", ajaxRequest).setTitle($m("ContactsTagPage.0"))
+				.setHeight(300).setWidth(360);
+
 		// 删除
 		addDeleteAjaxRequest(pp, "ContactsTagPage_del");
 	}
 
-	protected void addTagEditComponent(final PageParameter pp) {
-		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTagPage_addPage",
-				AddTagPage.class);
-		addWindowBean(pp, "ContactsTagPage_add", ajaxRequest).setTitle($m("ContactsTagPage.0"))
-				.setHeight(300).setWidth(360);
+	protected Class<? extends AbstractMVCPage> getTagEditClass(final PageParameter pp) {
+		return AddTagPage.class;
 	}
 
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
