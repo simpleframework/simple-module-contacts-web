@@ -12,6 +12,8 @@ import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
  *         http://www.simpleframework.net
  */
 public class ContactsSelectBean extends DictionaryBean {
+	/* 每页的数据数量 */
+	private int pageItems;
 
 	public ContactsSelectBean() {
 		setShowHelpTooltip(false);
@@ -19,6 +21,16 @@ public class ContactsSelectBean extends DictionaryBean {
 		setMinWidth(360);
 		setWidth(360);
 		setHeight(445);
+		setPageItems(100);
+	}
+
+	public int getPageItems() {
+		return pageItems;
+	}
+
+	public ContactsSelectBean setPageItems(final int pageItems) {
+		this.pageItems = pageItems;
+		return this;
 	}
 
 	@Override

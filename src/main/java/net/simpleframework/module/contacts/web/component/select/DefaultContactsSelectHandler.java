@@ -1,5 +1,8 @@
 package net.simpleframework.module.contacts.web.component.select;
 
+import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.module.contacts.Contacts;
+import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.ui.dictionary.AbstractDictionaryHandler;
 
 /**
@@ -11,4 +14,9 @@ import net.simpleframework.mvc.component.ui.dictionary.AbstractDictionaryHandler
  */
 public class DefaultContactsSelectHandler extends AbstractDictionaryHandler implements
 		IContactsSelectHandler {
+
+	@Override
+	public IDataQuery<? extends Contacts> getContacts(final ComponentParameter cp) {
+		return _mycontactsService.queryMyContacts(cp.getLoginId());
+	}
 }

@@ -1,0 +1,13 @@
+.contacts_select .pager .pager_block_top {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  border: 0;
+}
+
+.contacts_select .tablepager .tfilter,
+.contacts_select .tablepager .tbody,
+.contacts_select .pager_no_result {
+  border-left: 0;
+  border-right: 0;
+}

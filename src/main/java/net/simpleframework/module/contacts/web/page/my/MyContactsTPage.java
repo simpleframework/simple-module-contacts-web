@@ -16,7 +16,6 @@ import net.simpleframework.module.contacts.web.page.mgr2.ContactsTPage.ContactsT
 import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
-import net.simpleframework.mvc.common.element.ETextAlign;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
 import net.simpleframework.mvc.common.element.SpanElement;
@@ -66,15 +65,14 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 				.addTablePagerBean(pp, "ContactsTPage_tbl", _ContactsTbl.class)
 				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
 		tablePager
-				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 80).setSort(false))
-				.addColumn(new TablePagerColumn("job", $m("ContactsTPage.6"), 80).setSort(false))
-				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 180).setSort(false))
+				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 100).setSort(false))
+				.addColumn(new TablePagerColumn("job", $m("ContactsTPage.6"), 100).setSort(false))
+				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 150).setSort(false))
 				.addColumn(
 						new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
 								"line-height:1.6;color:#666;").setFilterSort(false))
 				.addColumn(
-						new TablePagerColumn("tags", $m("ContactsTPage.4"), 240).setTextAlign(
-								ETextAlign.center).setFilterSort(false))
+						new TablePagerColumn("tags", $m("ContactsTPage.4"), 240).setFilterSort(false))
 				.addColumn(TablePagerColumn.OPE(110));
 		return tablePager;
 	}

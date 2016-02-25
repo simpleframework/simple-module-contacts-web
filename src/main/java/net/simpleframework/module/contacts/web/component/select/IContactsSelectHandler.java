@@ -1,5 +1,9 @@
 package net.simpleframework.module.contacts.web.component.select;
 
+import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.module.contacts.Contacts;
+import net.simpleframework.module.contacts.IContactsContextAware;
+import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.ui.dictionary.IDictionaryHandle;
 
 /**
@@ -9,5 +13,13 @@ import net.simpleframework.mvc.component.ui.dictionary.IDictionaryHandle;
  *         https://github.com/simpleframework
  *         http://www.simpleframework.net
  */
-public interface IContactsSelectHandler extends IDictionaryHandle {
+public interface IContactsSelectHandler extends IDictionaryHandle, IContactsContextAware {
+
+	/**
+	 * 获取联系人列表
+	 * 
+	 * @param cp
+	 * @return
+	 */
+	IDataQuery<? extends Contacts> getContacts(ComponentParameter cp);
 }
