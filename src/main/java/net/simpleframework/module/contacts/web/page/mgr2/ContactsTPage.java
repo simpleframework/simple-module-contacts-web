@@ -27,6 +27,7 @@ import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ButtonElement;
+import net.simpleframework.mvc.common.element.ETextAlign;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
 import net.simpleframework.mvc.common.element.SpanElement;
@@ -87,12 +88,15 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 				.addTablePagerBean(pp, "ContactsTPage_tbl", ContactsTbl.class)
 				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
 		tablePager
-				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 120).setSort(false))
+				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 80).setSort(false))
+				.addColumn(new TablePagerColumn("job", $m("ContactsTPage.6"), 80).setSort(false))
+				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 180).setSort(false))
 				.addColumn(
 						new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
 								"line-height:1.6;color:#666;").setFilterSort(false))
 				.addColumn(
-						new TablePagerColumn("tags", $m("ContactsTPage.4"), 280).setFilterSort(false))
+						new TablePagerColumn("tags", $m("ContactsTPage.4"), 240).setTextAlign(
+								ETextAlign.center).setFilterSort(false))
 				.addColumn(TablePagerColumn.OPE(110));
 		return tablePager;
 	}
@@ -146,16 +150,11 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
 			final Contacts contacts = (Contacts) dataObject;
 			final KVMap row = new KVMap();
-			row.add("text", contacts.getText()).add("dept", toDeptHTML(cp, contacts))
-					.add("desc", toDescHTML(cp, contacts)).add("tags", toTagsHTML(cp, contacts))
+			row.add("text", contacts.getText()).add("dept", contacts.getDept())
+					.add("job", contacts.getJob()).add("desc", toDescHTML(cp, contacts))
+					.add("tags", toTagsHTML(cp, contacts))
 					.add(TablePagerColumn.OPE, toOpeHTML(cp, contacts));
 			return row;
-		}
-
-		protected String toDeptHTML(final ComponentParameter cp, final Contacts contacts) {
-			final StringBuilder sb = new StringBuilder();
-			sb.append(contacts.getDept());
-			return sb.toString();
 		}
 
 		protected String toTagsHTML(final ComponentParameter cp, final Contacts contacts) {
