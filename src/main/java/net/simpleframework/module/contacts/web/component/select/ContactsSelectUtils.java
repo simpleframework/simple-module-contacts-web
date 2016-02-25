@@ -25,4 +25,11 @@ public abstract class ContactsSelectUtils {
 			final HttpServletResponse response) {
 		return ComponentParameter.get(request, response, BEAN_ID);
 	}
+
+	public static String toTblHTML(final ComponentParameter cp) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<div id='contacts_").append(cp.hashId()).append("'>");
+		sb.append("</div>");
+		return sb.toString();
+	}
 }

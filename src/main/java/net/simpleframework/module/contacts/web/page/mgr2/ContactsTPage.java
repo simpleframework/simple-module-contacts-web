@@ -146,10 +146,16 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
 			final Contacts contacts = (Contacts) dataObject;
 			final KVMap row = new KVMap();
-			row.add("text", contacts.getText()).add("desc", toDescHTML(cp, contacts))
-					.add("tags", toTagsHTML(cp, contacts))
+			row.add("text", contacts.getText()).add("dept", toDeptHTML(cp, contacts))
+					.add("desc", toDescHTML(cp, contacts)).add("tags", toTagsHTML(cp, contacts))
 					.add(TablePagerColumn.OPE, toOpeHTML(cp, contacts));
 			return row;
+		}
+
+		protected String toDeptHTML(final ComponentParameter cp, final Contacts contacts) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append(contacts.getDept());
+			return sb.toString();
 		}
 
 		protected String toTagsHTML(final ComponentParameter cp, final Contacts contacts) {

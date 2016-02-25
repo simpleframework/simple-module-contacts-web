@@ -1,5 +1,6 @@
 package net.simpleframework.module.contacts.web.component.select;
 
+import static net.simpleframework.common.I18n.$m;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
 
@@ -11,6 +12,14 @@ import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
  *         http://www.simpleframework.net
  */
 public class ContactsSelectBean extends DictionaryBean {
+
+	public ContactsSelectBean() {
+		setShowHelpTooltip(false);
+		setTitle($m("ContactsSelectBean.0"));
+		setMinWidth(360);
+		setWidth(360);
+		setHeight(445);
+	}
 
 	@Override
 	public String getHandlerClass() {

@@ -65,12 +65,13 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 				.addTablePagerBean(pp, "ContactsTPage_tbl", _ContactsTbl.class)
 				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
 		tablePager
-				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 120).setSort(false))
+				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 100).setSort(false))
+				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 150).setSort(false))
 				.addColumn(
 						new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
 								"line-height:1.6;color:#666;").setFilterSort(false))
 				.addColumn(
-						new TablePagerColumn("tags", $m("ContactsTPage.4"), 280).setFilterSort(false))
+						new TablePagerColumn("tags", $m("ContactsTPage.4"), 210).setFilterSort(false))
 				.addColumn(TablePagerColumn.OPE(110));
 		return tablePager;
 	}
