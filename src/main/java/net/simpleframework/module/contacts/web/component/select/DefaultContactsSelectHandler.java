@@ -1,6 +1,9 @@
 package net.simpleframework.module.contacts.web.component.select;
 
+import java.util.Map;
+
 import net.simpleframework.ado.query.IDataQuery;
+import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.module.contacts.Contacts;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.ui.dictionary.AbstractDictionaryHandler;
@@ -18,5 +21,11 @@ public class DefaultContactsSelectHandler extends AbstractDictionaryHandler impl
 	@Override
 	public IDataQuery<? extends Contacts> getContacts(final ComponentParameter cp) {
 		return _mycontactsService.queryMyContacts(cp.getLoginId());
+	}
+
+	@Override
+	public Map<String, Object> getContactsAttributes(final ComponentParameter cp,
+			final Contacts contacts) {
+		return new KVMap().add("contactsText", contacts.getText());
 	}
 }

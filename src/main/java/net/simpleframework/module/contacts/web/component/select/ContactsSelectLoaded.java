@@ -1,5 +1,7 @@
 package net.simpleframework.module.contacts.web.component.select;
 
+import static net.simpleframework.common.I18n.$m;
+
 import java.util.Map;
 
 import net.simpleframework.ado.query.IDataQuery;
@@ -7,6 +9,8 @@ import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.module.contacts.Contacts;
 import net.simpleframework.mvc.DefaultPageHandler;
 import net.simpleframework.mvc.PageParameter;
+import net.simpleframework.mvc.common.element.Checkbox;
+import net.simpleframework.mvc.component.AbstractComponentBean;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.ComponentUtils;
 import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
@@ -32,8 +36,7 @@ public class ContactsSelectLoaded extends DefaultPageHandler {
 
 		final TablePagerBean tablePager = (TablePagerBean) pp
 				.addComponentBean(componentName + "_tablePager", TablePagerBean.class)
-				// .setJsRowDblclick("$Actions['" + userSelectName +
-				// "'].doDblclick(item);")
+				.setJsRowDblclick("$Actions['" + componentName + "'].doDblclick(item);")
 				.setShowHead(false).setPagerBarLayout(EPagerBarLayout.top).setShowEditPageItems(false)
 				.setExportAction("false").setIndexPages(4)
 				.setContainerId("contacts_" + contactsSelect.hashId())
@@ -55,6 +58,14 @@ public class ContactsSelectLoaded extends DefaultPageHandler {
 				return ContactsSelectUtils.get(cp).getBeanProperty(beanProperty);
 			} else if ("showCheckbox".equals(beanProperty)) {
 				return ContactsSelectUtils.get(cp).getBeanProperty("multiple");
+			} else if ("title".equals(beanProperty)) {
+				final ComponentParameter nCP = ContactsSelectUtils.get(cp);
+				if ((Boolean) nCP.getBeanProperty("multiple")) {
+					return new Checkbox("idAllCheck_" + nCP.getComponentName(),
+							$m("ContactsSelectLoaded.0")).toString();
+				} else {
+					return $m("ContactsSelectLoaded.1");
+				}
 			}
 			return super.getBeanProperty(cp, beanProperty);
 		}
@@ -70,6 +81,20 @@ public class ContactsSelectLoaded extends DefaultPageHandler {
 		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
 			final Contacts contacts = (Contacts) dataObject;
 			return new KVMap().add("text", contacts.getText()).add("dept", contacts.getDept());
+		}
+
+		@Override
+		protected Map<String, Object> getRowAttributes(final ComponentParameter cp,
+				final Object dataObject) {
+			final KVMap attributes = new KVMap();
+			final ComponentParameter nCP = ComponentParameter.get(cp,
+					(AbstractComponentBean) cp.componentBean.getAttr("contactsSelect"));
+			final Map<String, Object> attri = ((IContactsSelectHandler) nCP.getComponentHandler())
+					.getContactsAttributes(nCP, (Contacts) dataObject);
+			if (attri != null) {
+				attributes.putAll(attri);
+			}
+			return attributes;
 		}
 	}
 }

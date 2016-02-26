@@ -1,13 +1,40 @@
+.contacts_select .tablepager {
+  margin: 0 !important;
+}
+
+.contacts_select .tablepager .thead,
+.contacts_select .tablepager .tfilter,
+.contacts_select .tablepager .tbody,
+.contacts_select .pager_no_result {
+  border-left: 0 !important;
+  border-right: 0 !important;
+}
+
+.contacts_select .pager .pager_head {
+  margin: 3px 6px 0 0;
+}
+
+.contacts_select .pager .pager_title {
+  margin-left: 8px;
+}
+
 .contacts_select .pager .pager_block_top {
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
   border-radius: 0;
   border: 0;
+  height: 28px;
+  padding: 0;
+  background: none;
 }
 
-.contacts_select .tablepager .tfilter,
-.contacts_select .tablepager .tbody,
-.contacts_select .pager_no_result {
-  border-left: 0;
-  border-right: 0;
+.contacts_select .b {
+  background-color: #f9f9f9;
+  border-top: 1px solid #ccc;
+  bottom: 0;
+  padding: 6px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  width: 100%;
 }

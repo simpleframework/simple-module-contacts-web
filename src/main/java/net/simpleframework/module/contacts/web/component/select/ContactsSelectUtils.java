@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.simpleframework.mvc.PageRequestResponse;
+import net.simpleframework.mvc.common.element.ButtonElement;
+import net.simpleframework.mvc.common.element.SpanElement;
 import net.simpleframework.mvc.component.ComponentParameter;
 
 /**
@@ -29,6 +31,12 @@ public abstract class ContactsSelectUtils {
 	public static String toTblHTML(final ComponentParameter cp) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("<div id='contacts_").append(cp.hashId()).append("'>");
+		sb.append("</div>");
+		sb.append("<div class='b'>");
+		final String componentName = cp.getComponentName();
+		sb.append(ButtonElement.okBtn().setOnclick("$Actions['" + componentName + "'].doDblclick();"));
+		sb.append(SpanElement.SPACE);
+		sb.append(ButtonElement.cancelBtn().setOnclick("$Actions['" + componentName + "'].close();"));
 		sb.append("</div>");
 		return sb.toString();
 	}
