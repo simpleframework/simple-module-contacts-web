@@ -27,9 +27,14 @@ import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
 import net.simpleframework.mvc.component.base.validation.EValidatorMethod;
 import net.simpleframework.mvc.component.base.validation.Validator;
 import net.simpleframework.mvc.component.ext.deptselect.DeptSelectBean;
+import net.simpleframework.mvc.component.ui.menu.MenuBean;
+import net.simpleframework.mvc.component.ui.menu.MenuItem;
+import net.simpleframework.mvc.component.ui.menu.MenuItems;
+import net.simpleframework.mvc.component.ui.pager.AbstractTablePagerSchema;
 import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
+import net.simpleframework.mvc.component.ui.pager.TablePagerUtils;
 import net.simpleframework.mvc.component.ui.pager.db.AbstractDbTablePagerHandler;
 import net.simpleframework.mvc.component.ui.propeditor.EInputCompType;
 import net.simpleframework.mvc.component.ui.propeditor.InputComp;
@@ -62,6 +67,9 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 
 		// 删除
 		addDeleteAjaxRequest(pp, "ContactsTagPage_del");
+
+		// 移动
+		addAjaxRequest(pp, "ContactsTagPage_Move").setHandlerMethod("doMove");
 	}
 
 	protected Class<? extends AbstractMVCPage> getTagEditClass(final PageParameter pp) {
@@ -72,7 +80,7 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		final TablePagerBean tablePager = (TablePagerBean) super
 				.addTablePagerBean(pp, "ContactsTagPage_tbl", ContactsTagTbl.class).setShowHead(false)
 				.setPagerBarLayout(EPagerBarLayout.none).setContainerId("idContactsTagPage_tbl");
-		tablePager.addColumn(new TablePagerColumn("text")).addColumn(TablePagerColumn.OPE(55));
+		tablePager.addColumn(new TablePagerColumn("text")).addColumn(TablePagerColumn.OPE(70));
 		return tablePager;
 	}
 
@@ -88,11 +96,16 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
 	}
 
+	@Transaction(context = IContactsContext.class)
+	public IForward doMove(final ComponentParameter cp) {
+		_contactsTagService.exchange(TablePagerUtils.getExchangeBeans(cp, _contactsTagService));
+		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
+	}
+
 	@Override
 	protected String toContentHTML(final PageParameter pp) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("<div id='idContactsTagPage_tbl'>");
-		sb.append("</div>");
+		sb.append("<div id='idContactsTagPage_tbl'></div>");
 		return sb.toString();
 	}
 
@@ -129,7 +142,22 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 			final StringBuilder sb = new StringBuilder();
 			sb.append(ButtonElement.deleteBtn().setOnclick(
 					"$Actions['ContactsTagPage_del']('id=" + tag.getId() + "');"));
+			sb.append(AbstractTablePagerSchema.IMG_DOWNMENU);
 			return sb.toString();
+		}
+
+		@Override
+		public MenuItems getContextMenu(final ComponentParameter cp, final MenuBean menuBean,
+				final MenuItem menuItem) {
+			if (menuItem == null) {
+				final MenuItems items = MenuItems.of();
+				items.append(MenuItem.TBL_MOVE_UP("ContactsTagPage_Move"));
+				items.append(MenuItem.TBL_MOVE_UP2("ContactsTagPage_Move"));
+				items.append(MenuItem.TBL_MOVE_DOWN("ContactsTagPage_Move"));
+				items.append(MenuItem.TBL_MOVE_DOWN2("ContactsTagPage_Move"));
+				return items;
+			}
+			return null;
 		}
 	}
 

@@ -12,6 +12,7 @@ import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
+import net.simpleframework.mvc.component.ui.pager.TablePagerUtils;
 
 /**
  * Licensed under the Apache License, Version 2.0
@@ -32,11 +33,18 @@ public class MyContactsTagPage extends ContactsTagPage {
 		return _AddTagPage.class;
 	}
 
-	@Override
 	@Transaction(context = IContactsContext.class)
+	@Override
 	public IForward doDelete(final ComponentParameter cp) {
 		final Object[] ids = StringUtils.split(cp.getParameter("id"));
 		_mycontactsTagService.delete(ids);
+		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
+	}
+
+	@Transaction(context = IContactsContext.class)
+	@Override
+	public IForward doMove(final ComponentParameter cp) {
+		_mycontactsTagService.exchange(TablePagerUtils.getExchangeBeans(cp, _mycontactsTagService));
 		return new JavascriptForward("$Actions['ContactsTagPage_tbl']();");
 	}
 
