@@ -4,10 +4,14 @@ import static net.simpleframework.common.I18n.$m;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.simpleframework.ado.FilterItem;
+import net.simpleframework.ado.db.DbDataQuery;
+import net.simpleframework.ado.db.common.ExpressionValue;
 import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.ArrayUtils;
@@ -119,6 +123,21 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 		protected IDbBeanService<?> getContactsTagService() {
 			return _contactsTagService;
+		}
+
+		@Override
+		protected ExpressionValue createFilterExpressionValue(final DbDataQuery<?> qs,
+				final TablePagerColumn oCol, final Collection<FilterItem> coll) {
+			final String col = oCol.getColumnName();
+			if ("text".equals(col)) {
+				final ExpressionValue ev = super.createFilterExpressionValue(qs, oCol, coll);
+				final ExpressionValue ev2 = super.createFilterExpressionValue(qs, new TablePagerColumn(
+						"py"), coll);
+				ev.setExpression("((" + ev.getExpression() + ") or (" + ev2.getExpression() + "))");
+				ev.addValues(ev2.getValues());
+				return ev;
+			}
+			return super.createFilterExpressionValue(qs, oCol, coll);
 		}
 
 		@Override
