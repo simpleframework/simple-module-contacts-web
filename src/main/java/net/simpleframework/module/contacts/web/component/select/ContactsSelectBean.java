@@ -15,6 +15,11 @@ public class ContactsSelectBean extends DictionaryBean {
 	/* 每页的数据数量 */
 	private int pageItems;
 
+	/* 是否我的联系人 */
+	private boolean mycontacts = true;
+	/* 标签名 */
+	private String tagText;
+
 	public ContactsSelectBean() {
 		setShowHelpTooltip(false);
 		setTitle($m("ContactsSelectBean.0"));
@@ -31,6 +36,22 @@ public class ContactsSelectBean extends DictionaryBean {
 	public ContactsSelectBean setPageItems(final int pageItems) {
 		this.pageItems = pageItems;
 		return this;
+	}
+
+	public boolean isMycontacts() {
+		return mycontacts;
+	}
+
+	public void setMycontacts(final boolean mycontacts) {
+		this.mycontacts = mycontacts;
+	}
+
+	public String getTagText() {
+		return tagText;
+	}
+
+	public void setTagText(final String tagText) {
+		this.tagText = tagText;
 	}
 
 	@Override
