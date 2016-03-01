@@ -24,6 +24,7 @@ import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
 import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
+import net.simpleframework.mvc.component.ui.pager.TablePagerUtils;
 import net.simpleframework.mvc.template.AbstractTBTemplatePage;
 
 /**
@@ -47,6 +48,8 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 
 		// 删除
 		addDeleteAjaxRequest(pp, "ContactsTPage_del");
+		// 移动
+		addAjaxRequest(pp, "ContactsTPage_Move").setHandlerMethod("doMove");
 
 		// 编辑窗口
 		AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
@@ -88,6 +91,12 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	public IForward doDelete(final ComponentParameter cp) {
 		final Object[] ids = StringUtils.split(cp.getParameter("id"));
 		_mycontactsService.delete(ids);
+		return new JavascriptForward("$Actions['ContactsTPage_tbl']();");
+	}
+
+	@Transaction(context = IContactsContext.class)
+	public IForward doMove(final ComponentParameter cp) {
+		_mycontactsService.exchange(TablePagerUtils.getExchangeBeans(cp, _mycontactsService));
 		return new JavascriptForward("$Actions['ContactsTPage_tbl']();");
 	}
 

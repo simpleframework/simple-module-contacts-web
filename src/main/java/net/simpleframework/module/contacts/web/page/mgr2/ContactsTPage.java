@@ -37,9 +37,14 @@ import net.simpleframework.mvc.common.element.LinkElement;
 import net.simpleframework.mvc.common.element.SpanElement;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
+import net.simpleframework.mvc.component.ui.menu.MenuBean;
+import net.simpleframework.mvc.component.ui.menu.MenuItem;
+import net.simpleframework.mvc.component.ui.menu.MenuItems;
+import net.simpleframework.mvc.component.ui.pager.AbstractTablePagerSchema;
 import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
 import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
+import net.simpleframework.mvc.component.ui.pager.TablePagerUtils;
 import net.simpleframework.mvc.component.ui.pager.db.AbstractDbTablePagerHandler;
 
 /**
@@ -62,6 +67,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 		// 删除
 		addDeleteAjaxRequest(pp, "ContactsTPage_del");
+		// 移动
+		addAjaxRequest(pp, "ContactsTPage_Move").setHandlerMethod("doMove");
 
 		// 添加
 		AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
@@ -100,7 +107,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 								"line-height:1.6;color:#666;").setFilterSort(false))
 				.addColumn(
 						new TablePagerColumn("tags", $m("ContactsTPage.4"), 240).setFilterSort(false))
-				.addColumn(TablePagerColumn.OPE(110));
+				.addColumn(TablePagerColumn.OPE(120));
 		return tablePager;
 	}
 
@@ -108,6 +115,12 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	public IForward doDelete(final ComponentParameter cp) {
 		final Object[] ids = StringUtils.split(cp.getParameter("id"));
 		_contactsService.delete(ids);
+		return new JavascriptForward("$Actions['ContactsTPage_tbl']();");
+	}
+
+	@Transaction(context = IContactsContext.class)
+	public IForward doMove(final ComponentParameter cp) {
+		_contactsService.exchange(TablePagerUtils.getExchangeBeans(cp, _contactsService));
 		return new JavascriptForward("$Actions['ContactsTPage_tbl']();");
 	}
 
@@ -219,7 +232,22 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			sb.append(SpanElement.SPACE);
 			sb.append(ButtonElement.deleteBtn().setOnclick(
 					"$Actions['ContactsTPage_del']('id=" + contacts.getId() + "');"));
+			sb.append(AbstractTablePagerSchema.IMG_DOWNMENU);
 			return sb.toString();
+		}
+
+		@Override
+		public MenuItems getContextMenu(final ComponentParameter cp, final MenuBean menuBean,
+				final MenuItem menuItem) {
+			if (menuItem == null) {
+				final MenuItems items = MenuItems.of();
+				items.append(MenuItem.TBL_MOVE_UP("ContactsTPage_Move"));
+				items.append(MenuItem.TBL_MOVE_UP2("ContactsTPage_Move"));
+				items.append(MenuItem.TBL_MOVE_DOWN("ContactsTPage_Move"));
+				items.append(MenuItem.TBL_MOVE_DOWN2("ContactsTPage_Move"));
+				return items;
+			}
+			return null;
 		}
 	}
 }
