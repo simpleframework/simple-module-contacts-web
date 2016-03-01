@@ -11,6 +11,7 @@ import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.ID;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.ArrayUtils;
+import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.module.contacts.Contacts;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.module.contacts.IContactsContextAware;
@@ -19,7 +20,10 @@ import net.simpleframework.module.contacts.web.page.ContactsUtils;
 import net.simpleframework.module.contacts.web.page.mgr2.ContactsTPage.ContactsTbl;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ButtonElement;
+import net.simpleframework.mvc.common.element.ETextAlign;
+import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
+import net.simpleframework.mvc.common.element.TableRows;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
 import net.simpleframework.mvc.component.ui.pager.EPagerBarLayout;
@@ -47,7 +51,7 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 
 		// 添加
 		final AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "TongxunluTPage_viewPage",
-				ContactsEditPage.class);
+				_ContactsEditPage.class);
 		addWindowBean(pp, "TongxunluTPage_view", ajaxRequest).setTitle($m("ContactsTPage.1"))
 				.setHeight(500).setWidth(620);
 	}
@@ -58,8 +62,11 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idTongxunluTPage_tbl");
 		tablePager
 				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 100).setSort(false))
+				.addColumn(
+						new TablePagerColumn("sex", $m("ContactsTPage.7"), 60).setTextAlign(
+								ETextAlign.center).setFilterSort(false))
 				.addColumn(new TablePagerColumn("job", $m("ContactsTPage.6"), 100).setSort(false))
-				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 150).setSort(false))
+				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 180).setSort(false))
 				.addColumn(
 						new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
 								"line-height:1.6;color:#666;").setFilterSort(false))
@@ -111,23 +118,56 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
-			cp.addFormParameter("py", cp.getParameter("py"));
+			final String py = cp.getParameter("py");
+			cp.addFormParameter("py", py);
 			final ID orgId = cp.getLDomainId();
 			if (tag == null) {
 				tag = _contactsTagService.getContactsTag(orgId, $m("TongxunluTPage.0"), true);
 			}
-			return _contactsService.queryContacts(orgId, tag);
+			return _contactsService.queryContacts(orgId, py, tag);
+		}
+
+		@Override
+		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
+			final KVMap row = (KVMap) super.getRowData(cp, dataObject);
+			final Contacts contacts = (Contacts) dataObject;
+			row.add("sex", contacts.getSex());
+			return row;
 		}
 
 		@Override
 		protected String toOpeHTML(final ComponentParameter cp, final Contacts contacts) {
 			final StringBuilder sb = new StringBuilder();
 			sb.append(new ButtonElement($m("Button.View"))
-					.setOnclick("$Actions['TongxunluTPage_view']();"));
+					.setOnclick("$Actions['TongxunluTPage_view']('contactsId=" + contacts.getId()
+							+ "');"));
 			return sb.toString();
 		}
 	}
 
 	public static class _ContactsEditPage extends ContactsEditPage {
+		@Override
+		public ElementList getLeftElements(final PageParameter pp) {
+			return null;
+		}
+
+		@Override
+		public ElementList getRightElements(final PageParameter pp) {
+			final ElementList el = super.getRightElements(pp);
+			el.remove(0);
+			return el;
+		}
+
+		@Override
+		protected TableRows getTableRows(final PageParameter pp) {
+			final TableRows rows = super.getTableRows(pp);
+			rows.remove(rows.size() - 4);
+			return rows.setReadonly(true);
+		}
+
+		@Override
+		public boolean isButtonsOnTop(final PageParameter pp) {
+			return false;
+		}
 	}
 }

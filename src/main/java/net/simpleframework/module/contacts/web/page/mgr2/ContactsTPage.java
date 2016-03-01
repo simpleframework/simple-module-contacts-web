@@ -66,7 +66,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
 				ContactsEditPage.class);
 		addWindowBean(pp, "ContactsTPage_edit", ajaxRequest).setTitle($m("ContactsTPage.1"))
-				.setHeight(500).setWidth(620);
+				.setHeight(540).setWidth(620);
 
 		// 标签管理
 		ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage", ContactsTagPage.class);
