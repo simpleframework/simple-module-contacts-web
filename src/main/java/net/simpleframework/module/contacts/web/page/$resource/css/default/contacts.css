@@ -39,3 +39,27 @@
 .ContactsEditPage .FormTableRowTemplatePage .form_tbl .l {
   padding: 6px;
 }
+
+/*-------------------------TongxunluTPage--------------------------*/
+.TongxunluTPage {
+  background-color: #fff;
+  min-height: 480px;
+}
+
+.TongxunluTPage .pynav {
+  padding: 10px 0 0px 10px;
+}
+
+.TongxunluTPage .pynav a.simple_btn {
+  margin-right: 4px;
+}
+
+.TongxunluTPage .txl-filter {
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #c30;
+  padding: 5px 10px;
+}
+
+#idTongxunluTPage_tbl {
+  padding: 10px;
+}
