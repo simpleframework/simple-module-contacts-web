@@ -33,6 +33,7 @@ import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ButtonElement;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
+import net.simpleframework.mvc.common.element.LinkElement;
 import net.simpleframework.mvc.common.element.SpanElement;
 import net.simpleframework.mvc.component.ComponentParameter;
 import net.simpleframework.mvc.component.base.ajaxrequest.AjaxRequestBean;
@@ -206,7 +207,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			}
 			final String email = contacts.getEmail();
 			if (StringUtils.hasText(email)) {
-				sb.append(email);
+				sb.append(new LinkElement(email).setHref("mailto: " + email));
 			}
 			return sb.toString();
 		}
