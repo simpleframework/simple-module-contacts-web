@@ -85,9 +85,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				.addValidators(new Validator(EValidatorMethod.date, "#ce_birthday", "yyyy-MM-dd"));
 	}
 
-	@Override
-	protected String getPageCSS(final PageParameter pp) {
-		return "ContactsEditPage";
+	protected ContactsTag getContactsTag(final PageParameter pp) {
+		return _contactsTagService.getBean(pp.getParameter("tagId"));
 	}
 
 	public IForward doUserSelect(final ComponentParameter cp) {
@@ -119,11 +118,6 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		return contacts;
 	}
 
-	protected IDataQuery<? extends ContactsTag> queryTags(final PageParameter pp) {
-		return ((IContactsTagService) getContactsTagService()).queryOrgTags(ContactsUtils
-				.getDomainId(pp));
-	}
-
 	@Transaction(context = IContactsContext.class)
 	@Override
 	public JavascriptForward onSave(final ComponentParameter cp) throws Exception {
@@ -143,31 +137,38 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			getContactsService().update(contacts);
 		}
 
-		// 同步tag
-		final Map<ID, ContactsTag> adds = new LinkedHashMap<ID, ContactsTag>();
-		for (final String tagId : StringUtils.split(cp.getParameter("ce_tags"))) {
-			final ContactsTag tag = (ContactsTag) getContactsTagService().getBean(tagId);
-			if (tag != null) {
-				adds.put(tag.getId(), tag);
+		final ContactsTag tag = getContactsTag(cp);
+		if (tag != null) {
+			if (insert) {
+				_contactsTagRService.addSubjectTagR(contacts, tag);
 			}
-		}
-		final List<ID> removes = new ArrayList<ID>();
-		final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
-		ContactsTagR tagr;
-		while ((tagr = dq.next()) != null) {
-			final ID tagId = tagr.getTagId();
-			if (adds.containsKey(tagId)) {
-				adds.remove(tagId);
-			} else {
-				removes.add(tagr.getId());
+		} else {
+			// 同步tag
+			final Map<ID, ContactsTag> adds = new LinkedHashMap<ID, ContactsTag>();
+			for (final String tagId : StringUtils.split(cp.getParameter("ce_tags"))) {
+				final ContactsTag _tag = (ContactsTag) getContactsTagService().getBean(tagId);
+				if (_tag != null) {
+					adds.put(_tag.getId(), _tag);
+				}
 			}
-		}
+			final List<ID> removes = new ArrayList<ID>();
+			final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
+			ContactsTagR tagr;
+			while ((tagr = dq.next()) != null) {
+				final ID tagId = tagr.getTagId();
+				if (adds.containsKey(tagId)) {
+					adds.remove(tagId);
+				} else {
+					removes.add(tagr.getId());
+				}
+			}
 
-		for (final ID rid : removes) {
-			_contactsTagRService.delete(rid);
-		}
-		for (final ContactsTag tag : adds.values()) {
-			_contactsTagRService.addSubjectTagR(contacts, tag);
+			for (final ID rid : removes) {
+				_contactsTagRService.delete(rid);
+			}
+			for (final ContactsTag _tag : adds.values()) {
+				_contactsTagRService.addSubjectTagR(contacts, _tag);
+			}
 		}
 
 		return new JavascriptForward(
@@ -264,15 +265,16 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
 		final TableRow r11 = new TableRow(new RowField($m("AccountEditPage.15"), ce_description));
 		final TableRows rows = TableRows.of(r1, r2, r3, r4, r5, r6, r7);
-		if (isShowTags(pp)) {
+		if (getContactsTag(pp) == null) {
 			rows.append(r8);
 		}
 		rows.append(r9, r10, r11);
 		return rows;
 	}
 
-	protected boolean isShowTags(final PageParameter pp) {
-		return true;
+	@Override
+	protected String getPageCSS(final PageParameter pp) {
+		return "ContactsEditPage";
 	}
 
 	@Override
@@ -283,6 +285,11 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 	@Override
 	public String getLabelWidth(final PageParameter pp) {
 		return "80px";
+	}
+
+	protected IDataQuery<? extends ContactsTag> queryTags(final PageParameter pp) {
+		return ((IContactsTagService) getContactsTagService()).queryOrgTags(ContactsUtils
+				.getDomainId(pp));
 	}
 
 	public static class TagListbox extends AbstractListboxHandler {

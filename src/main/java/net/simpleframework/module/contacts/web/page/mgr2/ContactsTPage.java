@@ -27,6 +27,7 @@ import net.simpleframework.module.contacts.IContactsContextAware;
 import net.simpleframework.module.contacts.web.page.ContactsEditPage;
 import net.simpleframework.module.contacts.web.page.ContactsTagPage;
 import net.simpleframework.module.contacts.web.page.ContactsUtils;
+import net.simpleframework.mvc.AbstractMVCPage;
 import net.simpleframework.mvc.IForward;
 import net.simpleframework.mvc.JavascriptForward;
 import net.simpleframework.mvc.PageParameter;
@@ -83,7 +84,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	}
 
 	protected ContactsTag getContactsTag(final PageParameter pp) {
-		return _contactsTagService.getContactsTag(pp.getLDomainId(), "通讯录", false);
+		return null;
 	}
 
 	@Transaction(context = IContactsContext.class)
@@ -118,11 +119,14 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 	@Override
 	public ElementList getRightElements(final PageParameter pp) {
-		final ElementList el = ElementList.of(LinkButton.addBtn().setOnclick(
-				"$Actions['ContactsTPage_edit']();"));
-		if (getContactsTag(pp) == null) {
-			el.append(SpanElement.SPACE,
+		final ContactsTag tag = getContactsTag(pp);
+		final LinkButton addBtn = LinkButton.addBtn();
+		final ElementList el = ElementList.of();
+		if (tag == null) {
+			el.append(addBtn.setOnclick("$Actions['ContactsTPage_edit']();"), SpanElement.SPACE,
 					new LinkButton($m("ContactsTPage.0")).setOnclick("$Actions['ContactsTPage_tag']();"));
+		} else {
+			el.add(addBtn.setOnclick("$Actions['ContactsTPage_edit']('tagId=" + tag.getId() + "');"));
 		}
 		return el;
 	}
@@ -171,8 +175,10 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 		protected List<?> getTags(final ComponentParameter cp) {
 			final ArrayList<ContactsTag> list = new ArrayList<ContactsTag>();
-			ContactsTag tag = ((ContactsTPage) get(cp)).getContactsTag(cp);
-			if (tag != null) {
+			final AbstractMVCPage page = get(cp);
+			ContactsTag tag;
+			if (page instanceof ContactsTPage
+					&& (tag = ((ContactsTPage) page).getContactsTag(cp)) != null) {
 				list.add(tag);
 			} else {
 				final String tags = cp.getParameter("tags");
@@ -240,8 +246,15 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 		protected String toOpeHTML(final ComponentParameter cp, final Contacts contacts) {
 			final StringBuilder sb = new StringBuilder();
-			sb.append(ButtonElement.editBtn().setOnclick(
-					"$Actions['ContactsTPage_edit']('contactsId=" + contacts.getId() + "');"));
+			String js = "$Actions['ContactsTPage_edit']('contactsId=" + contacts.getId();
+			final AbstractMVCPage page = get(cp);
+			ContactsTag tag;
+			if (page instanceof ContactsTPage
+					&& (tag = ((ContactsTPage) page).getContactsTag(cp)) != null) {
+				js += "&tagId=" + tag.getId();
+			}
+			js += "');";
+			sb.append(ButtonElement.editBtn().setOnclick(js));
 			sb.append(SpanElement.SPACE);
 			sb.append(ButtonElement.deleteBtn().setOnclick(
 					"$Actions['ContactsTPage_del']('id=" + contacts.getId() + "');"));

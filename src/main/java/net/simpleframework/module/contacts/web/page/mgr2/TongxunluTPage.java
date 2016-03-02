@@ -39,9 +39,15 @@ import net.simpleframework.mvc.template.struct.FilterButtons;
  *         http://www.simpleframework.net
  */
 public class TongxunluTPage extends AbstractTemplatePage implements IContactsContextAware {
+	private static ContactsTag tag;
+
 	@Override
 	protected void onForward(final PageParameter pp) throws Exception {
 		super.onForward(pp);
+
+		if (tag == null) {
+			tag = _contactsTagService.getContactsTag(pp.getLDomainId(), $m("TongxunluTPage.0"), true);
+		}
 
 		pp.addImportCSS(ContactsUtils.class, "/contacts.css");
 
@@ -105,16 +111,12 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 	}
 
 	public static class TongxunluTbl extends ContactsTbl {
-		private ContactsTag tag;
 
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
 			final String py = cp.getParameter("py");
 			cp.addFormParameter("py", py);
 			final ID orgId = cp.getLDomainId();
-			if (tag == null) {
-				tag = _contactsTagService.getContactsTag(orgId, $m("TongxunluTPage.0"), true);
-			}
 			return _contactsService.queryContacts(orgId, py, tag);
 		}
 
@@ -147,8 +149,8 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 		}
 
 		@Override
-		protected boolean isShowTags(final PageParameter pp) {
-			return false;
+		protected ContactsTag getContactsTag(final PageParameter pp) {
+			return tag;
 		}
 
 		@Override

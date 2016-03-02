@@ -29,6 +29,11 @@ public class MyContactsEditPage extends ContactsEditPage {
 	}
 
 	@Override
+	protected ContactsTag getContactsTag(final PageParameter pp) {
+		return null;
+	}
+
+	@Override
 	protected Contacts createContacts(final PageParameter pp) {
 		final MyContacts contacts = getContactsService().createBean();
 		contacts.setOwnerId(pp.getLoginId());
