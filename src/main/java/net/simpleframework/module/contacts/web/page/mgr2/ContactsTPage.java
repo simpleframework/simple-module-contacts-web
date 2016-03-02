@@ -171,14 +171,19 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 		protected List<?> getTags(final ComponentParameter cp) {
 			final ArrayList<ContactsTag> list = new ArrayList<ContactsTag>();
-			final String tags = cp.getParameter("tags");
-			if (StringUtils.hasText(tags)) {
-				cp.addFormParameter("tags", tags);
+			ContactsTag tag = ((ContactsTPage) get(cp)).getContactsTag(cp);
+			if (tag != null) {
+				list.add(tag);
+			} else {
+				final String tags = cp.getParameter("tags");
+				if (StringUtils.hasText(tags)) {
+					cp.addFormParameter("tags", tags);
 
-				for (final String tagId : ArrayUtils.asSet(StringUtils.split(tags, ";"))) {
-					final ContactsTag tag = (ContactsTag) getContactsTagService().getBean(tagId);
-					if (tag != null) {
-						list.add(tag);
+					for (final String tagId : ArrayUtils.asSet(StringUtils.split(tags, ";"))) {
+						tag = (ContactsTag) getContactsTagService().getBean(tagId);
+						if (tag != null) {
+							list.add(tag);
+						}
 					}
 				}
 			}
