@@ -11,7 +11,6 @@ import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.ID;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.ArrayUtils;
-import net.simpleframework.common.coll.KVMap;
 import net.simpleframework.module.contacts.Contacts;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.module.contacts.IContactsContextAware;
@@ -20,7 +19,6 @@ import net.simpleframework.module.contacts.web.page.ContactsUtils;
 import net.simpleframework.module.contacts.web.page.mgr2.ContactsTPage.ContactsTbl;
 import net.simpleframework.mvc.PageParameter;
 import net.simpleframework.mvc.common.element.ButtonElement;
-import net.simpleframework.mvc.common.element.ETextAlign;
 import net.simpleframework.mvc.common.element.ElementList;
 import net.simpleframework.mvc.common.element.LinkButton;
 import net.simpleframework.mvc.common.element.TableRows;
@@ -60,16 +58,9 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 		final TablePagerBean tablePager = (TablePagerBean) super
 				.addTablePagerBean(pp, "TongxunluTPage_tbl", TongxunluTbl.class)
 				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idTongxunluTPage_tbl");
-		tablePager
-				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 100).setSort(false))
-				.addColumn(
-						new TablePagerColumn("sex", $m("ContactsTPage.7"), 60).setTextAlign(
-								ETextAlign.center).setFilterSort(false))
-				.addColumn(new TablePagerColumn("job", $m("ContactsTPage.6"), 100).setSort(false))
-				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 180).setSort(false))
-				.addColumn(
-						new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
-								"line-height:1.6;color:#666;").setFilterSort(false))
+		tablePager.addColumn(ContactsUtils.TC_TEXT().setWidth(120)).addColumn(ContactsUtils.TC_SEX())
+				.addColumn(ContactsUtils.TC_JOB().setWidth(120))
+				.addColumn(ContactsUtils.TC_DEPT().setWidth(200)).addColumn(ContactsUtils.TC_DESC())
 				.addColumn(TablePagerColumn.OPE(70));
 		return tablePager;
 	}
@@ -128,14 +119,6 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 		}
 
 		@Override
-		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
-			final KVMap row = (KVMap) super.getRowData(cp, dataObject);
-			final Contacts contacts = (Contacts) dataObject;
-			row.add("sex", contacts.getSex());
-			return row;
-		}
-
-		@Override
 		protected String toOpeHTML(final ComponentParameter cp, final Contacts contacts) {
 			final StringBuilder sb = new StringBuilder();
 			sb.append(new ButtonElement($m("Button.View"))
@@ -160,9 +143,12 @@ public class TongxunluTPage extends AbstractTemplatePage implements IContactsCon
 
 		@Override
 		protected TableRows getTableRows(final PageParameter pp) {
-			final TableRows rows = super.getTableRows(pp);
-			rows.remove(rows.size() - 4);
-			return rows.setReadonly(true);
+			return super.getTableRows(pp).setReadonly(true);
+		}
+
+		@Override
+		protected boolean isShowTags(final PageParameter pp) {
+			return false;
 		}
 
 		@Override

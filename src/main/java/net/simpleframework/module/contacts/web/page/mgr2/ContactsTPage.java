@@ -82,33 +82,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 				.setHeight(500).setWidth(400);
 	}
 
-	@Override
-	protected String getPageCSS(final PageParameter pp) {
-		return "ContactsTPage";
-	}
-
-	@Override
-	public ElementList getRightElements(final PageParameter pp) {
-		return ElementList.of(LinkButton.addBtn().setOnclick("$Actions['ContactsTPage_edit']();"),
-				SpanElement.SPACE,
-				new LinkButton($m("ContactsTPage.0")).setOnclick("$Actions['ContactsTPage_tag']();"));
-	}
-
-	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
-		final TablePagerBean tablePager = (TablePagerBean) super
-				.addTablePagerBean(pp, "ContactsTPage_tbl", ContactsTbl.class)
-				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
-		tablePager
-				.addColumn(new TablePagerColumn("text", $m("ContactsTPage.2"), 100).setSort(false))
-				.addColumn(new TablePagerColumn("job", $m("ContactsTPage.6"), 100).setSort(false))
-				.addColumn(new TablePagerColumn("dept", $m("ContactsTPage.5"), 150).setSort(false))
-				.addColumn(
-						new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
-								"line-height:1.6;color:#666;").setFilterSort(false))
-				.addColumn(
-						new TablePagerColumn("tags", $m("ContactsTPage.4"), 240).setFilterSort(false))
-				.addColumn(TablePagerColumn.OPE(120));
-		return tablePager;
+	protected ContactsTag getContactsTag(final PageParameter pp) {
+		return _contactsTagService.getContactsTag(pp.getLDomainId(), "通讯录", false);
 	}
 
 	@Transaction(context = IContactsContext.class)
@@ -122,6 +97,39 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	public IForward doMove(final ComponentParameter cp) {
 		_contactsService.exchange(TablePagerUtils.getExchangeBeans(cp, _contactsService));
 		return new JavascriptForward("$Actions['ContactsTPage_tbl']();");
+	}
+
+	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
+		final TablePagerBean tablePager = (TablePagerBean) super
+				.addTablePagerBean(pp, "ContactsTPage_tbl", ContactsTbl.class)
+				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
+		if (getContactsTag(pp) == null) {
+			tablePager.addColumn(ContactsUtils.TC_TEXT()).addColumn(ContactsUtils.TC_JOB())
+					.addColumn(ContactsUtils.TC_DEPT()).addColumn(ContactsUtils.TC_DESC())
+					.addColumn(ContactsUtils.TC_TAGs());
+		} else {
+			tablePager.addColumn(ContactsUtils.TC_TEXT().setWidth(120))
+					.addColumn(ContactsUtils.TC_SEX()).addColumn(ContactsUtils.TC_JOB().setWidth(120))
+					.addColumn(ContactsUtils.TC_DEPT().setWidth(200)).addColumn(ContactsUtils.TC_DESC());
+		}
+		tablePager.addColumn(TablePagerColumn.OPE(120));
+		return tablePager;
+	}
+
+	@Override
+	public ElementList getRightElements(final PageParameter pp) {
+		final ElementList el = ElementList.of(LinkButton.addBtn().setOnclick(
+				"$Actions['ContactsTPage_edit']();"));
+		if (getContactsTag(pp) == null) {
+			el.append(SpanElement.SPACE,
+					new LinkButton($m("ContactsTPage.0")).setOnclick("$Actions['ContactsTPage_tag']();"));
+		}
+		return el;
+	}
+
+	@Override
+	protected String getPageCSS(final PageParameter pp) {
+		return getClassName(getClass());
 	}
 
 	@Override
@@ -181,9 +189,9 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
 			final Contacts contacts = (Contacts) dataObject;
 			final KVMap row = new KVMap();
-			row.add("text", contacts.getText()).add("dept", contacts.getDept())
-					.add("job", contacts.getJob()).add("desc", toDescHTML(cp, contacts))
-					.add("tags", toTagsHTML(cp, contacts))
+			row.add("text", contacts.getText()).add("sex", contacts.getSex())
+					.add("dept", contacts.getDept()).add("job", contacts.getJob())
+					.add("desc", toDescHTML(cp, contacts)).add("tags", toTagsHTML(cp, contacts))
 					.add(TablePagerColumn.OPE, toOpeHTML(cp, contacts));
 			return row;
 		}

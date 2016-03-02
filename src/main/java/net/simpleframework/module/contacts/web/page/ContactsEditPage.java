@@ -263,8 +263,16 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final TableRow r9 = new TableRow(new RowField($m("ContactsEditPage.12"), ce_workaddress));
 		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
 		final TableRow r11 = new TableRow(new RowField($m("AccountEditPage.15"), ce_description));
+		final TableRows rows = TableRows.of(r1, r2, r3, r4, r5, r6, r7);
+		if (isShowTags(pp)) {
+			rows.append(r8);
+		}
+		rows.append(r9, r10, r11);
+		return rows;
+	}
 
-		return TableRows.of(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11);
+	protected boolean isShowTags(final PageParameter pp) {
+		return true;
 	}
 
 	@Override
@@ -278,7 +286,6 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 	}
 
 	public static class TagListbox extends AbstractListboxHandler {
-
 		@Override
 		public ListItems getListItems(final ComponentParameter cp) {
 			final ListItems items = ListItems.of();

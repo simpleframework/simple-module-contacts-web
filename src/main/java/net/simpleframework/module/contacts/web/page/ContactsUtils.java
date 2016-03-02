@@ -1,5 +1,7 @@
 package net.simpleframework.module.contacts.web.page;
 
+import static net.simpleframework.common.I18n.$m;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -10,6 +12,8 @@ import net.simpleframework.ctx.service.ado.db.IDbBeanService;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.mvc.AbstractMVCPage;
 import net.simpleframework.mvc.PageParameter;
+import net.simpleframework.mvc.common.element.ETextAlign;
+import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
 import net.simpleframework.mvc.template.struct.FilterButton;
 import net.simpleframework.mvc.template.struct.FilterButtons;
 
@@ -46,5 +50,31 @@ public abstract class ContactsUtils {
 			sb.append("</div>");
 		}
 		return sb.toString();
+	}
+
+	public static TablePagerColumn TC_TEXT() {
+		return new TablePagerColumn("text", $m("ContactsTPage.2"), 100).setSort(false);
+	}
+
+	public static TablePagerColumn TC_SEX() {
+		return new TablePagerColumn("sex", $m("ContactsTPage.7"), 60).setTextAlign(ETextAlign.center)
+				.setFilterSort(false);
+	}
+
+	public static TablePagerColumn TC_JOB() {
+		return new TablePagerColumn("job", $m("ContactsTPage.6"), 100).setSort(false);
+	}
+
+	public static TablePagerColumn TC_DEPT() {
+		return new TablePagerColumn("dept", $m("ContactsTPage.5"), 150).setSort(false);
+	}
+
+	public static TablePagerColumn TC_DESC() {
+		return new TablePagerColumn("desc", $m("ContactsTPage.3")).setLblStyle(
+				"line-height:1.6;color:#666;").setFilterSort(false);
+	}
+
+	public static TablePagerColumn TC_TAGs() {
+		return new TablePagerColumn("tags", $m("ContactsTPage.4"), 240).setFilterSort(false);
 	}
 }
