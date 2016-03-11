@@ -200,8 +200,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final DictMultiSelectInput ce_tags = (DictMultiSelectInput) new DictMultiSelectInput(
 				"ce_tags").setDictComponent("ContactsEditPage_tag");
 
-		final TextButton ce_dept = new TextButton("ce_dept")
-				.setOnclick("$Actions['ContactsEditPage_deptSelect']();");
+		final TextButton ce_dept = new TextButton("ce_dept").setOnclick(
+				"$Actions['ContactsEditPage_deptSelect']();").setEditable(true);
 		final InputElement ce_job = new InputElement("ce_job");
 		final InputElement ce_email = new InputElement("ce_email");
 		final InputElement ce_mobile = new InputElement("ce_mobile");
