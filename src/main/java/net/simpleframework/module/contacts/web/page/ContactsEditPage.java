@@ -93,7 +93,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final PermissionUser user = cp.getUser(cp.getParameter("userId"));
 		return new JsonForward().put("text", user.getText()).put("sex", user.getSex())
 				.put("birthday", Convert.toDateString(user.getBirthday(), "yyyy-MM-dd"))
-				.put("dept", user.getDept().toString()).put("job", user.getNick())
+				.put("dept", user.getDept().toString()).put("job", user.getProperty("job"))
 				.put("mobile", user.getMobile()).put("email", user.getEmail())
 				.put("workphone", user.getProperty("officePhone"))
 				.put("homephone", user.getProperty("homePhone"))
