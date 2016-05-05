@@ -62,8 +62,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		// 日历
 		addCalendarBean(pp, "cal_Birthday");
 		// 部门选择
-		addComponentBean(pp, "ContactsEditPage_deptSelect", DeptSelectBean.class).setClearAction(
-				"false").setBindingText("ce_dept");
+		addComponentBean(pp, "ContactsEditPage_deptSelect", DeptSelectBean.class)
+				.setClearAction("false").setBindingId("ce_deptId").setBindingText("ce_dept");
 
 		// 帐号选择
 		addComponentBean(pp, "ContactsEditPage_userselect", UserSelectBean.class).setShowGroupOpt(
@@ -100,7 +100,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				.put("workaddress", user.getProperty("address"))
 				.put("homeaddress", user.getProperty("hometown"))
 				.put("postcode", user.getProperty("postcode"))
-				.put("description", user.getDescription());
+				.put("description", user.getDescription()).put("userId", user.getId())
+				.put("deptId", user.getDept().getId());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -140,7 +141,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final ContactsTag tag = getContactsTag(cp);
 		if (tag != null) {
 			if (insert) {
-				_contactsTagRService.addSubjectTagR(contacts, tag);
+				_contactsTagRService.addContactsTagR(contacts, tag);
 			}
 		} else {
 			// 同步tag
@@ -167,7 +168,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				_contactsTagRService.delete(rid);
 			}
 			for (final ContactsTag _tag : adds.values()) {
-				_contactsTagRService.addSubjectTagR(contacts, _tag);
+				_contactsTagRService.addContactsTagR(contacts, _tag);
 			}
 		}
 
@@ -177,7 +178,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 	protected static String[] _PROPs = new String[] { "text", "postcode", "sex", "dept", "job",
 			"email", "mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin",
-			"workaddress", "homeaddress", "description" };
+			"workaddress", "homeaddress", "description", "userId", "deptId" };
 
 	@Override
 	public ElementList getLeftElements(final PageParameter pp) {
@@ -188,6 +189,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 	@Override
 	protected TableRows getTableRows(final PageParameter pp) {
 		final InputElement ce_id = InputElement.hidden("ce_id");
+		final InputElement ce_userId = InputElement.hidden("ce_userId");
+		final InputElement ce_deptId = InputElement.hidden("ce_deptId");
 		final InputElement ce_text = new InputElement("ce_text");
 		final InputElement ce_postcode = new InputElement("ce_postcode");
 
@@ -244,12 +247,11 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			}
 		}
 
-		final TableRow r1 = new TableRow(
-				new RowField($m("ContactsEditPage.0"), ce_id, ce_text).setStarMark(true), new RowField(
-						$m("ContactsEditPage.16"), ce_postcode));
+		final TableRow r1 = new TableRow(new RowField($m("ContactsEditPage.0"), ce_id, ce_userId,
+				ce_text).setStarMark(true), new RowField($m("ContactsEditPage.16"), ce_postcode));
 		final TableRow r2 = new TableRow(new RowField($m("ContactsEditPage.2"),
 				ce_sex.addElements(opts)), new RowField($m("ContactsEditPage.3"), ce_birthday));
-		final TableRow r3 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_dept),
+		final TableRow r3 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId, ce_dept),
 				new RowField($m("ContactsEditPage.5"), ce_job));
 		final TableRow r4 = new TableRow(new RowField($m("ContactsEditPage.6"), ce_email),
 				new RowField($m("ContactsEditPage.7"), ce_mobile));

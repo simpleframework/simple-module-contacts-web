@@ -4,8 +4,25 @@
 }
 
 /*-------------------------ContactsTPage--------------------------*/
+
+.contact-nav {
+  padding: 8px;
+}
+
 #idContactsTPage_tbl {
   padding: 8px;
+}
+
+.contact-nav .left {
+  width: 19%;
+}
+
+.contact-nav .right {
+  width: 80%;
+}
+
+.contact-nav #idContactsTPage_tbl {
+  padding: 0;
 }
 
 .contact-tag {

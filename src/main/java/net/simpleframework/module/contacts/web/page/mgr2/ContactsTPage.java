@@ -16,6 +16,7 @@ import net.simpleframework.ado.query.IDataQuery;
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.common.coll.ArrayUtils;
 import net.simpleframework.common.coll.KVMap;
+import net.simpleframework.ctx.permission.PermissionDept;
 import net.simpleframework.ctx.service.ado.db.IDbBeanService;
 import net.simpleframework.ctx.trans.Transaction;
 import net.simpleframework.module.common.web.page.AbstractMgrTPage;
@@ -47,6 +48,10 @@ import net.simpleframework.mvc.component.ui.pager.TablePagerBean;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
 import net.simpleframework.mvc.component.ui.pager.TablePagerUtils;
 import net.simpleframework.mvc.component.ui.pager.db.AbstractDbTablePagerHandler;
+import net.simpleframework.mvc.component.ui.tree.AbstractTreeHandler;
+import net.simpleframework.mvc.component.ui.tree.TreeBean;
+import net.simpleframework.mvc.component.ui.tree.TreeNode;
+import net.simpleframework.mvc.component.ui.tree.TreeNodes;
 
 /**
  * Licensed under the Apache License, Version 2.0
@@ -62,25 +67,42 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		super.onForward(pp);
 
 		pp.addImportCSS(ContactsUtils.class, "/contacts.css");
-		pp.addImportJavascript(ContactsUtils.class, "/js/contacts.js");
 
 		addTablePagerBean(pp);
 
-		// 删除
-		addDeleteAjaxRequest(pp, "ContactsTPage_del");
-		// 移动
-		addAjaxRequest(pp, "ContactsTPage_Move").setHandlerMethod("doMove");
+		if (!isReadonly(pp)) {
+			pp.addImportJavascript(ContactsUtils.class, "/js/contacts.js");
 
-		// 添加
-		AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
-				ContactsEditPage.class);
-		addWindowBean(pp, "ContactsTPage_edit", ajaxRequest).setTitle($m("ContactsTPage.1"))
-				.setHeight(540).setWidth(620);
+			// 删除
+			addDeleteAjaxRequest(pp, "ContactsTPage_del");
+			// 移动
+			addAjaxRequest(pp, "ContactsTPage_Move").setHandlerMethod("doMove");
 
-		// 标签管理
-		ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage", ContactsTagPage.class);
-		addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTagPage.0"))
-				.setHeight(500).setWidth(400);
+			// 添加
+			AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
+					ContactsEditPage.class);
+			addWindowBean(pp, "ContactsTPage_edit", ajaxRequest).setTitle($m("ContactsTPage.1"))
+					.setHeight(540).setWidth(620);
+
+			// 标签管理
+			ajaxRequest = addAjaxRequest(pp, "ContactsTPage_tagPage", ContactsTagPage.class);
+			addWindowBean(pp, "ContactsTPage_tag", ajaxRequest).setTitle($m("ContactsTagPage.0"))
+					.setHeight(500).setWidth(400);
+		}
+
+		if (isShowNavtree(pp)) {
+			addTreeBean(pp, "ContactsTPage_orgTree").setContainerId("idContactsTPage_orgTree")
+					.setHandlerClass(OrgNavTree.class);
+		}
+	}
+
+	protected boolean isShowNavtree(final PageParameter pp) {
+		return true;
+	}
+
+	protected boolean isReadonly(final PageParameter pp) {
+		// 是否只读
+		return false;
 	}
 
 	protected ContactsTag getContactsTag(final PageParameter pp) {
@@ -119,16 +141,20 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 	@Override
 	public ElementList getRightElements(final PageParameter pp) {
-		final ContactsTag tag = getContactsTag(pp);
-		final LinkButton addBtn = LinkButton.addBtn();
-		final ElementList el = ElementList.of();
-		if (tag == null) {
-			el.append(addBtn.setOnclick("$Actions['ContactsTPage_edit']();"), SpanElement.SPACE,
-					new LinkButton($m("ContactsTPage.0")).setOnclick("$Actions['ContactsTPage_tag']();"));
-		} else {
-			el.add(addBtn.setOnclick("$Actions['ContactsTPage_edit']('tagId=" + tag.getId() + "');"));
+		if (!isReadonly(pp)) {
+			final ContactsTag tag = getContactsTag(pp);
+			final LinkButton addBtn = LinkButton.addBtn();
+			final ElementList el = ElementList.of();
+			if (tag == null) {
+				el.append(addBtn.setOnclick("$Actions['ContactsTPage_edit']();"), SpanElement.SPACE,
+						new LinkButton($m("ContactsTPage.0"))
+								.setOnclick("$Actions['ContactsTPage_tag']();"));
+			} else {
+				el.add(addBtn.setOnclick("$Actions['ContactsTPage_edit']('tagId=" + tag.getId() + "');"));
+			}
+			return el;
 		}
-		return el;
+		return super.getRightElements(pp);
 	}
 
 	@Override
@@ -141,7 +167,14 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			final String currentVariable) throws IOException {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(ContactsUtils.toContactFilterHTML(pp, _contactsTagService));
-		sb.append("<div id='idContactsTPage_tbl'></div>");
+		if (isShowNavtree(pp)) {
+			sb.append("<div class='contact-nav clearfix'>");
+			sb.append(" <div class='left' id='idContactsTPage_orgTree'></div>");
+			sb.append(" <div class='right' id='idContactsTPage_tbl'></div>");
+			sb.append("</div>");
+		} else {
+			sb.append("<div id='idContactsTPage_tbl'></div>");
+		}
 		return sb.toString();
 	}
 
@@ -168,8 +201,14 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 		@Override
 		public IDataQuery<?> createDataObjectQuery(final ComponentParameter cp) {
+			final String py = cp.getParameter("py");
+			cp.addFormParameter("py", py);
 			final List<?> list = getTags(cp);
-			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp),
+			final String deptId = cp.getParameter("deptId");
+			if (StringUtils.hasText(deptId)) {
+				cp.addFormParameter("deptId", deptId);
+			}
+			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp), deptId, py,
 					list.toArray(new ContactsTag[list.size()]));
 		}
 
@@ -274,6 +313,31 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 				return items;
 			}
 			return null;
+		}
+	}
+
+	public static class OrgNavTree extends AbstractTreeHandler {
+		@Override
+		public TreeNodes getTreenodes(final ComponentParameter cp, final TreeNode parent) {
+			final TreeNodes nodes = TreeNodes.of();
+			final TreeBean treeBean = (TreeBean) cp.componentBean;
+			if (parent == null) {
+				nodes.add(new TreeNode(treeBean, $m("ContactsTPage.8"))
+						.setJsClickCallback("$Actions['ContactsTPage_tbl']('deptId=__del')"));
+				nodes.add(new TreeNode(treeBean, cp.getDept(cp.getLDomainId())).setOpened(true));
+			} else {
+				final Object dataObject = parent.getDataObject();
+				if (dataObject instanceof PermissionDept) {
+					final PermissionDept dept = (PermissionDept) dataObject;
+					for (final PermissionDept c : dept.getDeptChildren()) {
+						final TreeNode tn = new TreeNode(treeBean, c);
+						nodes.add(tn);
+					}
+					parent.setJsClickCallback("$Actions['ContactsTPage_tbl']('deptId=" + dept.getId()
+							+ "')");
+				}
+			}
+			return nodes;
 		}
 	}
 }

@@ -7,7 +7,7 @@ var ContactsEditPage = {
       $A(
           [ "text", "sex", "birthday", "dept", "job", "mobile", "email",
               "workphone", "homephone", "workaddress", "homeaddress",
-              "postcode", "description" ]).each(function(name) {
+              "postcode", "description", "userId", "deptId" ]).each(function(name) {
         var val = rt[name];
         if (val) {
           $Actions.setValue("ce_" + name, val);
