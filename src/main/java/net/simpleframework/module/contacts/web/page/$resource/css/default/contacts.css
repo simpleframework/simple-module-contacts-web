@@ -76,3 +76,8 @@
 #idTongxunluTPage_tbl {
   padding: 10px;
 }
+
+/*-------------------------ContactsEditPage--------------------------*/
+.ContactsEditPage .form_tbl .l {
+  padding: 6px;
+}

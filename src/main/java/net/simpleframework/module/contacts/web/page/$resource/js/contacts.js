@@ -5,7 +5,7 @@ var ContactsEditPage = {
     act.jsCompleteCallback = function(rep) {
       var rt = rep.responseText.evalJSON().rt.evalJSON();
       $A(
-          [ "text", "sex", "birthday", "dept", "job", "mobile", "email",
+          [ "text", "sex", "birthday", "dept", "job", "nick", "mobile", "email",
               "workphone", "homephone", "workaddress", "homeaddress",
               "postcode", "description", "userId", "deptId" ]).each(function(name) {
         var val = rt[name];

@@ -94,8 +94,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		return new JsonForward().put("text", user.getText()).put("sex", user.getSex())
 				.put("birthday", Convert.toDateString(user.getBirthday(), "yyyy-MM-dd"))
 				.put("dept", user.getDept().toString()).put("job", user.getProperty("job"))
-				.put("mobile", user.getMobile()).put("email", user.getEmail())
-				.put("workphone", user.getProperty("officePhone"))
+				.put("nick", user.getProperty("nick")).put("mobile", user.getMobile())
+				.put("email", user.getEmail()).put("workphone", user.getProperty("officePhone"))
 				.put("homephone", user.getProperty("homePhone"))
 				.put("workaddress", user.getProperty("address"))
 				.put("homeaddress", user.getProperty("hometown"))
@@ -177,7 +177,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 	}
 
 	protected static String[] _PROPs = new String[] { "text", "postcode", "sex", "dept", "job",
-			"email", "mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin",
+			"nick", "email", "mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin",
 			"workaddress", "homeaddress", "description", "userId", "deptId" };
 
 	@Override
@@ -206,6 +206,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final TextButton ce_dept = new TextButton("ce_dept").setOnclick(
 				"$Actions['ContactsEditPage_deptSelect']();").setEditable(true);
 		final InputElement ce_job = new InputElement("ce_job");
+		final InputElement ce_nick = new InputElement("ce_nick");
 		final InputElement ce_email = new InputElement("ce_email");
 		final InputElement ce_mobile = new InputElement("ce_mobile");
 		final InputElement ce_workphone = new InputElement("ce_workphone");
@@ -227,6 +228,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			ce_birthday.setVal(Convert.toDateString(contacts.getBirthday(), "yyyy-MM-dd"));
 			ce_dept.setVal(contacts.getDept());
 			ce_job.setVal(contacts.getJob());
+			ce_nick.setVal(contacts.getNick());
 			ce_email.setVal(contacts.getEmail());
 			ce_mobile.setVal(contacts.getMobile());
 			ce_workphone.setVal(contacts.getWorkphone());
@@ -251,7 +253,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				ce_text).setStarMark(true), new RowField($m("ContactsEditPage.16"), ce_postcode));
 		final TableRow r2 = new TableRow(new RowField($m("ContactsEditPage.2"),
 				ce_sex.addElements(opts)), new RowField($m("ContactsEditPage.3"), ce_birthday));
-		final TableRow r3 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId, ce_dept),
+		final TableRow r3 = new TableRow(new RowField($m("ContactsEditPage.19"), ce_nick),
 				new RowField($m("ContactsEditPage.5"), ce_job));
 		final TableRow r4 = new TableRow(new RowField($m("ContactsEditPage.6"), ce_email),
 				new RowField($m("ContactsEditPage.7"), ce_mobile));
@@ -262,15 +264,16 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final TableRow r7 = new TableRow(new RowField($m("ContactsEditPage.14"), ce_qq),
 				new RowField($m("ContactsEditPage.15"), ce_weixin));
 
-		final TableRow r8 = new TableRow(new RowField($m("ContactsEditPage.1"), ce_tags));
-		final TableRow r9 = new TableRow(new RowField($m("ContactsEditPage.12"), ce_workaddress));
-		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
-		final TableRow r11 = new TableRow(new RowField($m("AccountEditPage.15"), ce_description));
-		final TableRows rows = TableRows.of(r1, r2, r3, r4, r5, r6, r7);
+		final TableRow r8 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId, ce_dept));
+		final TableRow r9 = new TableRow(new RowField($m("ContactsEditPage.1"), ce_tags));
+		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.12"), ce_workaddress));
+		final TableRow r11 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
+		final TableRow r12 = new TableRow(new RowField($m("AccountEditPage.15"), ce_description));
+		final TableRows rows = TableRows.of(r1, r2, r3, r4, r5, r6, r7, r8);
 		if (getContactsTag(pp) == null) {
-			rows.append(r8);
+			rows.append(r9);
 		}
-		rows.append(r9, r10, r11);
+		rows.append(r10, r11, r12);
 		return rows;
 	}
 
@@ -286,7 +289,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 	@Override
 	public String getLabelWidth(final PageParameter pp) {
-		return "80px";
+		return "65px";
 	}
 
 	protected IDataQuery<? extends ContactsTag> queryTags(final PageParameter pp) {
