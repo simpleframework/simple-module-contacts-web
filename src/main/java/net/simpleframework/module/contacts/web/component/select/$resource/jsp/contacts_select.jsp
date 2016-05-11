@@ -45,8 +45,14 @@
       }
       if (selects.length == 0) {
         alert("#(contacts_select.0)");
+      } else {
+        if (us.jsSelectCallback) {
+          if (us.jsSelectCallback(selects))
+            us.close();
+        } else {
+        	<%=DictionaryRender.genSelectCallback(cp, "selects")%>
+        }
       }
-      <%=DictionaryRender.genSelectCallback(cp, "selects")%>
     };
     
     tp.jsLoadedCallback = function() {
