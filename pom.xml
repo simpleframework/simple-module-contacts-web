@@ -13,14 +13,14 @@
   <dependencies>
     <dependency>
       <groupId>net.simpleframework</groupId>
-      <artifactId>simple-module-common-web</artifactId>
+      <artifactId>simple-module-contacts-service</artifactId>
     </dependency>
     
     <dependency>
       <groupId>net.simpleframework</groupId>
-      <artifactId>simple-module-contacts-service</artifactId>
+      <artifactId>simple-module-common-web</artifactId>
     </dependency>
-    
+     
     <!-- web容器包 -->
     <dependency>
       <groupId>javax.servlet</groupId>

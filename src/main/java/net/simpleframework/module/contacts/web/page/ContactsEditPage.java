@@ -186,6 +186,11 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				"$Actions['ContactsEditPage_userselect']();"));
 	}
 
+	protected TextButton createDeptTextButton(final PageParameter pp) {
+		return new TextButton("ce_dept").setOnclick("$Actions['ContactsEditPage_deptSelect']();")
+				.setEditable(true);
+	}
+
 	@Override
 	protected TableRows getTableRows(final PageParameter pp) {
 		final InputElement ce_id = InputElement.hidden("ce_id");
@@ -203,8 +208,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final DictMultiSelectInput ce_tags = (DictMultiSelectInput) new DictMultiSelectInput(
 				"ce_tags").setDictComponent("ContactsEditPage_tag");
 
-		final TextButton ce_dept = new TextButton("ce_dept").setOnclick(
-				"$Actions['ContactsEditPage_deptSelect']();").setEditable(true);
+		final TextButton ce_dept = createDeptTextButton(pp);
 		final InputElement ce_job = new InputElement("ce_job");
 		final InputElement ce_nick = new InputElement("ce_nick");
 		final InputElement ce_email = new InputElement("ce_email");

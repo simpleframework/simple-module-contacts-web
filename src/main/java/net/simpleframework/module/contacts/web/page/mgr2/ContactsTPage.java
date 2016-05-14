@@ -80,7 +80,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 
 			// 添加
 			AjaxRequestBean ajaxRequest = addAjaxRequest(pp, "ContactsTPage_editPage",
-					ContactsEditPage.class);
+					getContactsEditPage());
 			addWindowBean(pp, "ContactsTPage_edit", ajaxRequest).setTitle($m("ContactsTPage.1"))
 					.setHeight(540).setWidth(620);
 
@@ -94,6 +94,10 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			addTreeBean(pp, "ContactsTPage_orgTree").setContainerId("idContactsTPage_orgTree")
 					.setHandlerClass(OrgNavTree.class);
 		}
+	}
+
+	protected Class<? extends AbstractMVCPage> getContactsEditPage() {
+		return ContactsEditPage.class;
 	}
 
 	protected boolean isShowNavtree(final PageParameter pp) {
