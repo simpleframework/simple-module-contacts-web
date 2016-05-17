@@ -178,7 +178,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 	protected static String[] _PROPs = new String[] { "text", "postcode", "sex", "dept", "job",
 			"nick", "email", "mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin",
-			"workaddress", "homeaddress", "description", "userId", "deptId" };
+			"workaddress", "homeaddress", "description", "userId", "deptId", "deptDict" };
 
 	@Override
 	public ElementList getLeftElements(final PageParameter pp) {
@@ -196,6 +196,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final InputElement ce_id = InputElement.hidden("ce_id");
 		final InputElement ce_userId = InputElement.hidden("ce_userId");
 		final InputElement ce_deptId = InputElement.hidden("ce_deptId");
+		final InputElement ce_deptDict = InputElement.hidden("ce_deptDict");
 		final InputElement ce_text = new InputElement("ce_text");
 		final InputElement ce_postcode = new InputElement("ce_postcode");
 
@@ -244,6 +245,9 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			ce_workaddress.setVal(contacts.getWorkaddress());
 			ce_homeaddress.setVal(contacts.getHomeaddress());
 			ce_description.setVal(contacts.getDescription());
+			ce_userId.setVal(contacts.getUserId());
+			ce_deptId.setVal(contacts.getDeptId());
+			ce_deptDict.setVal(contacts.getDeptDict());
 
 			final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
 			ContactsTagR tagr;
@@ -268,7 +272,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final TableRow r7 = new TableRow(new RowField($m("ContactsEditPage.14"), ce_qq),
 				new RowField($m("ContactsEditPage.15"), ce_weixin));
 
-		final TableRow r8 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId, ce_dept));
+		final TableRow r8 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId,
+				ce_deptDict, ce_dept));
 		final TableRow r9 = new TableRow(new RowField($m("ContactsEditPage.1"), ce_tags));
 		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.12"), ce_workaddress));
 		final TableRow r11 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
