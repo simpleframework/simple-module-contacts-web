@@ -176,9 +176,9 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				"$Actions['ContactsTPage_edit'].close(); $Actions['ContactsTPage_tbl']();");
 	}
 
-	protected static String[] _PROPs = new String[] { "text", "postcode", "sex", "dept", "job",
-			"nick", "email", "mobile", "workphone", "workphone2", "fax", "homephone", "qq", "weixin",
-			"workaddress", "homeaddress", "description", "userId", "deptId", "deptDict" };
+	protected static String[] _PROPs = new String[] { "text", "postcode", "sex", "dept", "nation",
+			"job", "nick", "email", "mobile", "workphone", "workphone2", "fax", "homephone", "qq",
+			"weixin", "workaddress", "homeaddress", "description", "userId", "deptId", "deptDict" };
 
 	@Override
 	public ElementList getLeftElements(final PageParameter pp) {
@@ -209,6 +209,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final DictMultiSelectInput ce_tags = (DictMultiSelectInput) new DictMultiSelectInput(
 				"ce_tags").setDictComponent("ContactsEditPage_tag");
 
+		final InputElement ce_nation = new InputElement("ce_nation");
 		final TextButton ce_dept = createDeptTextButton(pp);
 		final InputElement ce_job = new InputElement("ce_job");
 		final InputElement ce_nick = new InputElement("ce_nick");
@@ -231,6 +232,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			ce_postcode.setVal(contacts.getPostcode());
 			Option.setSelected(opts, contacts.getSex());
 			ce_birthday.setVal(Convert.toDateString(contacts.getBirthday(), "yyyy-MM-dd"));
+			ce_nation.setVal(contacts.getNation());
 			ce_dept.setVal(contacts.getDept());
 			ce_job.setVal(contacts.getJob());
 			ce_nick.setVal(contacts.getNick());
@@ -273,12 +275,12 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				new RowField($m("ContactsEditPage.15"), ce_weixin));
 
 		final TableRow r8 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId,
-				ce_deptDict, ce_dept));
+				ce_deptDict, ce_dept), new RowField($m("ContactsEditPage.20"), ce_nation));
 		final TableRow r9 = new TableRow(new RowField($m("ContactsEditPage.1"), ce_tags));
 		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.12"), ce_workaddress));
 		final TableRow r11 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
 		final TableRow r12 = new TableRow(new RowField($m("AccountEditPage.15"), ce_description));
-		final TableRows rows = TableRows.of(r1, r2, r3, r4, r5, r6, r7, r8);
+		final TableRows rows = TableRows.of(r1, r2, r8, r3, r4, r5, r6, r7);
 		if (getContactsTag(pp) == null) {
 			rows.append(r9);
 		}
