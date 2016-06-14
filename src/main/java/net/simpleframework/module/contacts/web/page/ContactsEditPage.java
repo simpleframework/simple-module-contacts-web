@@ -260,7 +260,7 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		}
 
 		final TableRow r1 = new TableRow(new RowField($m("ContactsEditPage.0"), ce_id, ce_userId,
-				ce_text).setStarMark(true), new RowField($m("ContactsEditPage.16"), ce_postcode));
+				ce_text).setStarMark(true), new RowField($m("ContactsEditPage.20"), ce_nation));
 		final TableRow r2 = new TableRow(new RowField($m("ContactsEditPage.2"),
 				ce_sex.addElements(opts)), new RowField($m("ContactsEditPage.3"), ce_birthday));
 		final TableRow r3 = new TableRow(new RowField($m("ContactsEditPage.19"), ce_nick),
@@ -275,12 +275,12 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				new RowField($m("ContactsEditPage.15"), ce_weixin));
 
 		final TableRow r8 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId,
-				ce_deptDict, ce_dept), new RowField($m("ContactsEditPage.20"), ce_nation));
+				ce_deptDict, ce_dept), new RowField($m("ContactsEditPage.16"), ce_postcode));
 		final TableRow r9 = new TableRow(new RowField($m("ContactsEditPage.1"), ce_tags));
 		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.12"), ce_workaddress));
 		final TableRow r11 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
 		final TableRow r12 = new TableRow(new RowField($m("AccountEditPage.15"), ce_description));
-		final TableRows rows = TableRows.of(r1, r2, r8, r3, r4, r5, r6, r7);
+		final TableRows rows = TableRows.of(r1, r2, r3, r8, r4, r5, r6, r7);
 		if (getContactsTag(pp) == null) {
 			rows.append(r9);
 		}
