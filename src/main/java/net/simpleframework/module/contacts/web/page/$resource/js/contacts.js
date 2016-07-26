@@ -8,10 +8,7 @@ var ContactsEditPage = {
           [ "text", "sex", "birthday", "dept", "job", "nick", "mobile", "email",
               "workphone", "homephone", "workaddress", "homeaddress",
               "postcode", "description", "userId", "deptId" ]).each(function(name) {
-        var val = rt[name];
-        if (val) {
-          $Actions.setValue("ce_" + name, val);
-        }
+        $Actions.setValue("ce_" + name, (rt[name] || ""));
       });
     };
     act('userId=' + selects[0].id);
