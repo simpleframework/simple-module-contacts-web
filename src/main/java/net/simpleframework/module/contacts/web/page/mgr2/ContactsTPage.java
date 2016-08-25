@@ -209,10 +209,14 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			cp.addFormParameter("py", py);
 			final List<?> list = getTags(cp);
 			final String deptId = cp.getParameter("deptId");
+			final String deptDict = cp.getParameter("deptDict");
 			if (StringUtils.hasText(deptId)) {
 				cp.addFormParameter("deptId", deptId);
 			}
-			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp), deptId, null, py,
+			if (StringUtils.hasText(deptDict)) {
+				cp.addFormParameter("deptDict", deptDict);
+			}
+			return _contactsService.queryContacts(ContactsUtils.getDomainId(cp), deptId, deptDict, py,
 					list.toArray(new ContactsTag[list.size()]));
 		}
 
