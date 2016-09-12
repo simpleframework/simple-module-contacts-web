@@ -12,7 +12,6 @@ import net.simpleframework.ctx.service.ado.db.IDbBeanService;
 import net.simpleframework.module.contacts.ContactsTag;
 import net.simpleframework.mvc.AbstractMVCPage;
 import net.simpleframework.mvc.PageParameter;
-import net.simpleframework.mvc.common.element.ETextAlign;
 import net.simpleframework.mvc.component.ui.pager.TablePagerColumn;
 import net.simpleframework.mvc.template.struct.FilterButton;
 import net.simpleframework.mvc.template.struct.FilterButtons;
@@ -57,8 +56,7 @@ public abstract class ContactsUtils {
 	}
 
 	public static TablePagerColumn TC_SEX() {
-		return new TablePagerColumn("sex", $m("ContactsTPage.7"), 60).setTextAlign(ETextAlign.center)
-				.setFilterSort(false);
+		return new TablePagerColumn("sex", $m("ContactsTPage.7"), 60).center().setFilterSort(false);
 	}
 
 	public static TablePagerColumn TC_JOB() {
