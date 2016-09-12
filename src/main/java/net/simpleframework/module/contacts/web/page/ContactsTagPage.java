@@ -77,9 +77,9 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 	}
 
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
-		final TablePagerBean tablePager = (TablePagerBean) super
-				.addTablePagerBean(pp, "ContactsTagPage_tbl", ContactsTagTbl.class).setShowHead(false)
-				.setPagerBarLayout(EPagerBarLayout.none).setContainerId("idContactsTagPage_tbl");
+		final TablePagerBean tablePager = (TablePagerBean) super.addTablePagerBean(pp,
+				"ContactsTagPage_tbl", ContactsTagTbl.class).setShowHead(false)
+						.setPagerBarLayout(EPagerBarLayout.none).setContainerId("idContactsTagPage_tbl");
 		tablePager.addColumn(new TablePagerColumn("text")).addColumn(TablePagerColumn.OPE(70));
 		return tablePager;
 	}
@@ -116,7 +116,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		}
 
 		@Override
-		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
+		protected Map<String, Object> getRowData(final ComponentParameter cp,
+				final Object dataObject) {
 			final ContactsTag tag = (ContactsTag) dataObject;
 			final KVMap kv = new KVMap();
 			kv.add("text", toTitleHTML(cp, tag)).add(TablePagerColumn.OPE, toOpeHTML(cp, tag));
@@ -140,8 +141,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 
 		protected String toOpeHTML(final ComponentParameter cp, final ContactsTag tag) {
 			final StringBuilder sb = new StringBuilder();
-			sb.append(ButtonElement.deleteBtn().setOnclick(
-					"$Actions['ContactsTagPage_del']('id=" + tag.getId() + "');"));
+			sb.append(ButtonElement.deleteBtn()
+					.setOnclick("$Actions['ContactsTagPage_del']('id=" + tag.getId() + "');"));
 			sb.append(AbstractTablePagerSchema.IMG_DOWNMENU);
 			return sb.toString();
 		}
@@ -167,8 +168,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 		protected void onForward(final PageParameter pp) throws Exception {
 			super.onForward(pp);
 
-			addFormValidationBean(pp).addValidators(
-					new Validator(EValidatorMethod.required, "#tag_name"));
+			addFormValidationBean(pp)
+					.addValidators(new Validator(EValidatorMethod.required, "#tag_name"));
 		}
 
 		@Transaction(context = IContactsContext.class)
@@ -200,8 +201,8 @@ public class ContactsTagPage extends AbstractTBTemplatePage implements IContacts
 			final ContactsTag tag = _contactsTagService.getBean(pp.getParameter("tagId"));
 			final InputComp tagId = InputComp.hidden("tag_id");
 			final InputComp tag_name = new InputComp("tag_name");
-			final InputComp tag_description = new InputComp("tag_description").setType(
-					EInputCompType.textarea).setAttributes("rows:5");
+			final InputComp tag_description = new InputComp("tag_description")
+					.setType(EInputCompType.textarea).setAttributes("rows:5");
 			if (tag != null) {
 				tagId.setDefaultValue(tag.getId());
 				tag_name.setDefaultValue(tag.getText());

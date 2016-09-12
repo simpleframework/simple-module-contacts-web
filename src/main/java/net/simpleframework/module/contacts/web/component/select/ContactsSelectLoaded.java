@@ -41,8 +41,8 @@ public class ContactsSelectLoaded extends DefaultPageHandler {
 				.setExportAction("false").setIndexPages(4)
 				.setContainerId("contacts_" + contactsSelect.hashId())
 				.setHandlerClass(ContactsList.class).setAttr("contactsSelect", contactsSelect);
-		tablePager.addColumn(new TablePagerColumn("text").setWidth(120)).addColumn(
-				new TablePagerColumn("dept"));
+		tablePager.addColumn(new TablePagerColumn("text").setWidth(120))
+				.addColumn(new TablePagerColumn("dept"));
 	}
 
 	public static class ContactsList extends AbstractDbTablePagerHandler {
@@ -78,7 +78,8 @@ public class ContactsSelectLoaded extends DefaultPageHandler {
 		}
 
 		@Override
-		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
+		protected Map<String, Object> getRowData(final ComponentParameter cp,
+				final Object dataObject) {
 			final Contacts contacts = (Contacts) dataObject;
 			return new KVMap().add("text", contacts.getText()).add("dept", contacts.getDept());
 		}

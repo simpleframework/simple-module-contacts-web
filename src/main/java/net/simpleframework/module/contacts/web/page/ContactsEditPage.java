@@ -66,8 +66,9 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				.setClearAction("false").setBindingId("ce_deptId").setBindingText("ce_dept");
 
 		// 帐号选择
-		addComponentBean(pp, "ContactsEditPage_userselect", UserSelectBean.class).setShowGroupOpt(
-				false).setJsSelectCallback("return ContactsEditPage.userSelected(selects)");
+		addComponentBean(pp, "ContactsEditPage_userselect", UserSelectBean.class)
+				.setShowGroupOpt(false)
+				.setJsSelectCallback("return ContactsEditPage.userSelected(selects)");
 		// 帐号选择Action
 		addAjaxRequest(pp, "ContactsEditPage_us_callback").setHandlerMethod("doUserSelect");
 
@@ -99,9 +100,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 				.put("homephone", user.getProperty("homePhone"))
 				.put("workaddress", user.getProperty("address"))
 				.put("homeaddress", user.getProperty("hometown"))
-				.put("postcode", user.getProperty("postcode"))
-				.put("description", user.getDescription()).put("userId", user.getId())
-				.put("deptId", user.getDept().getId());
+				.put("postcode", user.getProperty("postcode")).put("description", user.getDescription())
+				.put("userId", user.getId()).put("deptId", user.getDept().getId());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -182,8 +182,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 
 	@Override
 	public ElementList getLeftElements(final PageParameter pp) {
-		return ElementList.of(LinkButton.corner($m("ContactsEditPage.17")).setOnclick(
-				"$Actions['ContactsEditPage_userselect']();"));
+		return ElementList.of(LinkButton.corner($m("ContactsEditPage.17"))
+				.setOnclick("$Actions['ContactsEditPage_userselect']();"));
 	}
 
 	protected TextButton createDeptTextButton(final PageParameter pp) {
@@ -259,10 +259,12 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			}
 		}
 
-		final TableRow r1 = new TableRow(new RowField($m("ContactsEditPage.0"), ce_id, ce_userId,
-				ce_text).setStarMark(true), new RowField($m("ContactsEditPage.20"), ce_nation));
-		final TableRow r2 = new TableRow(new RowField($m("ContactsEditPage.2"),
-				ce_sex.addElements(opts)), new RowField($m("ContactsEditPage.3"), ce_birthday));
+		final TableRow r1 = new TableRow(
+				new RowField($m("ContactsEditPage.0"), ce_id, ce_userId, ce_text).setStarMark(true),
+				new RowField($m("ContactsEditPage.20"), ce_nation));
+		final TableRow r2 = new TableRow(
+				new RowField($m("ContactsEditPage.2"), ce_sex.addElements(opts)),
+				new RowField($m("ContactsEditPage.3"), ce_birthday));
 		final TableRow r3 = new TableRow(new RowField($m("ContactsEditPage.19"), ce_nick),
 				new RowField($m("ContactsEditPage.5"), ce_job));
 		final TableRow r4 = new TableRow(new RowField($m("ContactsEditPage.6"), ce_email),
@@ -274,8 +276,9 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 		final TableRow r7 = new TableRow(new RowField($m("ContactsEditPage.14"), ce_qq),
 				new RowField($m("ContactsEditPage.15"), ce_weixin));
 
-		final TableRow r8 = new TableRow(new RowField($m("ContactsEditPage.4"), ce_deptId,
-				ce_deptDict, ce_dept), new RowField($m("ContactsEditPage.16"), ce_postcode));
+		final TableRow r8 = new TableRow(
+				new RowField($m("ContactsEditPage.4"), ce_deptId, ce_deptDict, ce_dept),
+				new RowField($m("ContactsEditPage.16"), ce_postcode));
 		final TableRow r9 = new TableRow(new RowField($m("ContactsEditPage.1"), ce_tags));
 		final TableRow r10 = new TableRow(new RowField($m("ContactsEditPage.12"), ce_workaddress));
 		final TableRow r11 = new TableRow(new RowField($m("ContactsEditPage.13"), ce_homeaddress));
@@ -304,8 +307,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 	}
 
 	protected IDataQuery<? extends ContactsTag> queryTags(final PageParameter pp) {
-		return ((IContactsTagService) getContactsTagService()).queryOrgTags(ContactsUtils
-				.getDomainId(pp));
+		return ((IContactsTagService) getContactsTagService())
+				.queryOrgTags(ContactsUtils.getDomainId(pp));
 	}
 
 	public static class TagListbox extends AbstractListboxHandler {
@@ -315,7 +318,8 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			final IDataQuery<? extends ContactsTag> dq = ((ContactsEditPage) get(cp)).queryTags(cp);
 			ContactsTag tag;
 			while ((tag = dq.next()) != null) {
-				items.add(new ListItem((ListboxBean) cp.componentBean, tag.getText()).setId(tag.getId()));
+				items.add(
+						new ListItem((ListboxBean) cp.componentBean, tag.getText()).setId(tag.getId()));
 			}
 			return items;
 		}

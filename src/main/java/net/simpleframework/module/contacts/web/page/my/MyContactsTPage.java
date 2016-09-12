@@ -64,9 +64,9 @@ public class MyContactsTPage extends AbstractTBTemplatePage implements IContacts
 	}
 
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
-		final TablePagerBean tablePager = (TablePagerBean) super
-				.addTablePagerBean(pp, "ContactsTPage_tbl", _ContactsTbl.class)
-				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
+		final TablePagerBean tablePager = (TablePagerBean) super.addTablePagerBean(pp,
+				"ContactsTPage_tbl", _ContactsTbl.class).setPagerBarLayout(EPagerBarLayout.bottom)
+						.setContainerId("idContactsTPage_tbl");
 		tablePager.addColumn(ContactsUtils.TC_TEXT()).addColumn(ContactsUtils.TC_JOB())
 				.addColumn(ContactsUtils.TC_DEPT()).addColumn(ContactsUtils.TC_DESC())
 				.addColumn(ContactsUtils.TC_TAGs()).addColumn(TablePagerColumn.OPE(120));

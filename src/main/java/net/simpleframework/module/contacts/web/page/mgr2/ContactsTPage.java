@@ -127,9 +127,9 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 	}
 
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
-		final TablePagerBean tablePager = (TablePagerBean) super
-				.addTablePagerBean(pp, "ContactsTPage_tbl", ContactsTbl.class)
-				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
+		final TablePagerBean tablePager = (TablePagerBean) super.addTablePagerBean(pp,
+				"ContactsTPage_tbl", ContactsTbl.class).setPagerBarLayout(EPagerBarLayout.bottom)
+						.setContainerId("idContactsTPage_tbl");
 		if (getContactsTag(pp) == null) {
 			tablePager.addColumn(ContactsUtils.TC_TEXT()).addColumn(ContactsUtils.TC_JOB())
 					.addColumn(ContactsUtils.TC_DEPT()).addColumn(ContactsUtils.TC_DESC())
@@ -154,7 +154,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 						new LinkButton($m("ContactsTPage.0"))
 								.setOnclick("$Actions['ContactsTPage_tag']();"));
 			} else {
-				el.add(addBtn.setOnclick("$Actions['ContactsTPage_edit']('tagId=" + tag.getId() + "');"));
+				el.add(addBtn
+						.setOnclick("$Actions['ContactsTPage_edit']('tagId=" + tag.getId() + "');"));
 			}
 			return el;
 		}
@@ -194,8 +195,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			final String col = oCol.getColumnName();
 			if ("text".equals(col)) {
 				final ExpressionValue ev = super.createFilterExpressionValue(qs, oCol, coll);
-				final ExpressionValue ev2 = super.createFilterExpressionValue(qs, new TablePagerColumn(
-						"py"), coll);
+				final ExpressionValue ev2 = super.createFilterExpressionValue(qs,
+						new TablePagerColumn("py"), coll);
 				ev.setExpression("((" + ev.getExpression() + ") or (" + ev2.getExpression() + "))");
 				ev.addValues(ev2.getValues());
 				return ev;
@@ -244,7 +245,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		}
 
 		@Override
-		protected Map<String, Object> getRowData(final ComponentParameter cp, final Object dataObject) {
+		protected Map<String, Object> getRowData(final ComponentParameter cp,
+				final Object dataObject) {
 			final Contacts contacts = (Contacts) dataObject;
 			final KVMap row = new KVMap();
 			row.add("text", contacts.getText()).add("sex", contacts.getSex())
@@ -267,8 +269,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 					if (!_tags.contains(_tagId)) {
 						_tags.add(_tagId);
 					}
-					sb.append(new SpanElement(tag).setClassName("contact-tag").setOnclick(
-							"$Actions.reloc('tags=" + StringUtils.join(_tags, ";") + "');"));
+					sb.append(new SpanElement(tag).setClassName("contact-tag")
+							.setOnclick("$Actions.reloc('tags=" + StringUtils.join(_tags, ";") + "');"));
 				}
 			}
 			return sb.toString();
@@ -303,8 +305,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			js += "');";
 			sb.append(ButtonElement.editBtn().setOnclick(js));
 			sb.append(SpanElement.SPACE);
-			sb.append(ButtonElement.deleteBtn().setOnclick(
-					"$Actions['ContactsTPage_del']('id=" + contacts.getId() + "');"));
+			sb.append(ButtonElement.deleteBtn()
+					.setOnclick("$Actions['ContactsTPage_del']('id=" + contacts.getId() + "');"));
 			sb.append(AbstractTablePagerSchema.IMG_DOWNMENU);
 			return sb.toString();
 		}
@@ -341,8 +343,8 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 						final TreeNode tn = new TreeNode(treeBean, c);
 						nodes.add(tn);
 					}
-					parent.setJsClickCallback("$Actions['ContactsTPage_tbl']('deptId=" + dept.getId()
-							+ "')");
+					parent.setJsClickCallback(
+							"$Actions['ContactsTPage_tbl']('deptId=" + dept.getId() + "')");
 				}
 			}
 			return nodes;

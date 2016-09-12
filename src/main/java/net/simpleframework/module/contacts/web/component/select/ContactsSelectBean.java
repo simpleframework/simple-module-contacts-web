@@ -1,6 +1,7 @@
 package net.simpleframework.module.contacts.web.component.select;
 
 import static net.simpleframework.common.I18n.$m;
+
 import net.simpleframework.common.StringUtils;
 import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
 

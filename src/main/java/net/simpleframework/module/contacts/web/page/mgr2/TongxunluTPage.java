@@ -68,9 +68,9 @@ public class TongxunluTPage extends ContactsTPage {
 
 	@Override
 	protected TablePagerBean addTablePagerBean(final PageParameter pp) {
-		final TablePagerBean tablePager = (TablePagerBean) super
-				.addTablePagerBean(pp, "ContactsTPage_tbl", TongxunluTbl.class)
-				.setPagerBarLayout(EPagerBarLayout.bottom).setContainerId("idContactsTPage_tbl");
+		final TablePagerBean tablePager = (TablePagerBean) super.addTablePagerBean(pp,
+				"ContactsTPage_tbl", TongxunluTbl.class).setPagerBarLayout(EPagerBarLayout.bottom)
+						.setContainerId("idContactsTPage_tbl");
 		tablePager.addColumn(ContactsUtils.TC_TEXT().setWidth(120)).addColumn(ContactsUtils.TC_SEX())
 				.addColumn(ContactsUtils.TC_JOB().setWidth(120))
 				.addColumn(ContactsUtils.TC_DEPT().setWidth(200)).addColumn(ContactsUtils.TC_DESC())
@@ -88,8 +88,8 @@ public class TongxunluTPage extends ContactsTPage {
 			if (py.length() == 1 && Character.isLetter(py.charAt(0))) {
 				final ArrayList<String> _set = new ArrayList<String>(set);
 				_set.remove(py);
-				btns.add(new FilterButton(py.toUpperCase()).setOnclick("$Actions.reloc('py="
-						+ StringUtils.join(_set, ";") + "')"));
+				btns.add(new FilterButton(py.toUpperCase())
+						.setOnclick("$Actions.reloc('py=" + StringUtils.join(_set, ";") + "')"));
 			}
 		}
 		if (btns.size() > 0) {
@@ -106,8 +106,8 @@ public class TongxunluTPage extends ContactsTPage {
 				_set.add(py);
 			}
 
-			sb.append(LinkButton.corner(py).setOnclick(
-					"$Actions.reloc('py=" + StringUtils.join(_set, ";") + "')"));
+			sb.append(LinkButton.corner(py)
+					.setOnclick("$Actions.reloc('py=" + StringUtils.join(_set, ";") + "')"));
 		}
 		sb.append("</div>");
 		if (isShowNavtree(pp)) {
@@ -125,9 +125,8 @@ public class TongxunluTPage extends ContactsTPage {
 		@Override
 		protected String toOpeHTML(final ComponentParameter cp, final Contacts contacts) {
 			final StringBuilder sb = new StringBuilder();
-			sb.append(new ButtonElement($m("Button.View"))
-					.setOnclick("$Actions['TongxunluTPage_view']('contactsId=" + contacts.getId()
-							+ "');"));
+			sb.append(new ButtonElement($m("Button.View")).setOnclick(
+					"$Actions['TongxunluTPage_view']('contactsId=" + contacts.getId() + "');"));
 			return sb.toString();
 		}
 	}

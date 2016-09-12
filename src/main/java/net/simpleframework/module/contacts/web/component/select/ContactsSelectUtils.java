@@ -34,7 +34,8 @@ public abstract class ContactsSelectUtils {
 		sb.append("</div>");
 		sb.append("<div class='b'>");
 		final String componentName = cp.getComponentName();
-		sb.append(ButtonElement.okBtn().setOnclick("$Actions['" + componentName + "'].doDblclick();"));
+		sb.append(
+				ButtonElement.okBtn().setOnclick("$Actions['" + componentName + "'].doDblclick();"));
 		sb.append(SpanElement.SPACE);
 		sb.append(ButtonElement.cancelBtn().setOnclick("$Actions['" + componentName + "'].close();"));
 		sb.append("</div>");

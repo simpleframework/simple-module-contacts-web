@@ -18,8 +18,8 @@ import net.simpleframework.mvc.component.ui.dictionary.AbstractDictionaryHandler
  *         https://github.com/simpleframework
  *         http://www.simpleframework.net
  */
-public class DefaultContactsSelectHandler extends AbstractDictionaryHandler implements
-		IContactsSelectHandler {
+public class DefaultContactsSelectHandler extends AbstractDictionaryHandler
+		implements IContactsSelectHandler {
 
 	@Override
 	public IDataQuery<? extends Contacts> getContacts(final ComponentParameter cp) {
