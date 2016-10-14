@@ -13,6 +13,8 @@ import net.simpleframework.mvc.component.ui.dictionary.DictionaryBean;
  *         http://www.simpleframework.net
  */
 public class ContactsSelectBean extends DictionaryBean {
+	private static final long serialVersionUID = 8528168339364653590L;
+
 	/* 每页的数据数量 */
 	private int pageItems;
 
