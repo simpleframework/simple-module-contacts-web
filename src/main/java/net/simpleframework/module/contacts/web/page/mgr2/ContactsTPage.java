@@ -222,7 +222,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 		}
 
 		protected List<?> getTags(final ComponentParameter cp) {
-			final ArrayList<ContactsTag> list = new ArrayList<ContactsTag>();
+			final ArrayList<ContactsTag> list = new ArrayList<>();
 			final AbstractMVCPage page = get(cp);
 			ContactsTag tag;
 			if (page instanceof ContactsTPage
@@ -264,7 +264,7 @@ public class ContactsTPage extends AbstractMgrTPage implements IContactsContextA
 			while ((tagr = dq.next()) != null) {
 				final ContactsTag tag = (ContactsTag) getContactsTagService().getBean(tagr.getTagId());
 				if (tag != null) {
-					final ArrayList<String> _tags = new ArrayList<String>(tags);
+					final ArrayList<String> _tags = new ArrayList<>(tags);
 					final String _tagId = String.valueOf(tag.getId());
 					if (!_tags.contains(_tagId)) {
 						_tags.add(_tagId);

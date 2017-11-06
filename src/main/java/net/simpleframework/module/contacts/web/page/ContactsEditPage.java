@@ -145,14 +145,14 @@ public class ContactsEditPage extends FormTableRowTemplatePage implements IConta
 			}
 		} else {
 			// 同步tag
-			final Map<ID, ContactsTag> adds = new LinkedHashMap<ID, ContactsTag>();
+			final Map<ID, ContactsTag> adds = new LinkedHashMap<>();
 			for (final String tagId : StringUtils.split(cp.getParameter("ce_tags"))) {
 				final ContactsTag _tag = (ContactsTag) getContactsTagService().getBean(tagId);
 				if (_tag != null) {
 					adds.put(_tag.getId(), _tag);
 				}
 			}
-			final List<ID> removes = new ArrayList<ID>();
+			final List<ID> removes = new ArrayList<>();
 			final IDataQuery<ContactsTagR> dq = _contactsTagRService.queryTagRs(contacts);
 			ContactsTagR tagr;
 			while ((tagr = dq.next()) != null) {

@@ -86,7 +86,7 @@ public class TongxunluTPage extends ContactsTPage {
 		final Set<String> set = ArrayUtils.asSet(StringUtils.split(pp.getParameter("py"), ";"));
 		for (final String py : set) {
 			if (py.length() == 1 && Character.isLetter(py.charAt(0))) {
-				final ArrayList<String> _set = new ArrayList<String>(set);
+				final ArrayList<String> _set = new ArrayList<>(set);
 				_set.remove(py);
 				btns.add(new FilterButton(py.toUpperCase())
 						.setOnclick("$Actions.reloc('py=" + StringUtils.join(_set, ";") + "')"));
@@ -101,7 +101,7 @@ public class TongxunluTPage extends ContactsTPage {
 		sb.append("<div class='pynav'>");
 		for (int i = 'A'; i <= 'Z'; i++) {
 			final String py = String.valueOf((char) i);
-			final ArrayList<String> _set = new ArrayList<String>(set);
+			final ArrayList<String> _set = new ArrayList<>(set);
 			if (!_set.contains(py)) {
 				_set.add(py);
 			}

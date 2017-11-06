@@ -37,7 +37,7 @@ public abstract class ContactsUtils {
 		for (final String tagId : tags) {
 			final ContactsTag tag = (ContactsTag) tagService.getBean(tagId);
 			if (tag != null) {
-				final ArrayList<String> _tags = new ArrayList<String>(tags);
+				final ArrayList<String> _tags = new ArrayList<>(tags);
 				_tags.remove(tagId);
 				btns.append(new FilterButton(tag)
 						.setOndelete("$Actions.reloc('tags=" + StringUtils.join(_tags, ";") + "')"));
